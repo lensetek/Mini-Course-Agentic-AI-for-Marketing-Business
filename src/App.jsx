@@ -271,6 +271,7 @@ const t = {
     certHeader: "Course Certificate",
     certDesc: "Complete the quick quiz challenge on all 5 modules to unlock your digital Certificate of Completion.",
     certBtn: "Generate Certificate",
+    certViewBtn: "View Certificate",
     studyMaterialsTab: "Study Materials",
     agentSandboxTab: "Agent Sandbox Lab",
     quizVerificationTab: "Quiz Verification",
@@ -285,6 +286,22 @@ const t = {
     certPrint: "Print Certificate",
     shareLinkedIn: "Add to LinkedIn",
     verifyBtnOpen: "Open Verification Page",
+    biodataTitle: "📋 Student Profile",
+    biodataEdit: "✏️ Edit",
+    biodataName: "Name",
+    biodataWhatsapp: "WhatsApp",
+    biodataBirth: "Place & Date of Birth",
+    biodataOccupation: "Occupation",
+    biodataIncomplete: "⚠️ Your profile is incomplete!",
+    biodataCompleteBtn: "Complete Now",
+    inviteTitle: "Exclusive Access Only",
+    inviteDesc: "This Mini-Course is private. Please enter your valid invitation code to unlock the curriculum and certificate features.",
+    invitePlaceholder: "Enter Invitation Code",
+    inviteSubmit: "Unlock Course",
+    inviteChecking: "Verifying Code...",
+    inviteErrorInvalid: "❌ Invalid invitation code. Please check and try again.",
+    inviteErrorLimit: "❌ This invitation code has reached its maximum usage limit.",
+    inviteSuccess: "🎉 Access granted! Welcome to the course.",
     backToStudy: "Back to Study",
     classroomBtn: "Go to Classroom",
     curriculumBtn: "Go to Curriculum",
@@ -542,7 +559,8 @@ const t = {
     sidebarHeader: "Modul Pembelajaran",
     certHeader: "Sertifikat Kelulusan",
     certDesc: "Selesaikan kuis verifikasi kompetensi di kelima modul untuk membuka Sertifikat Kelulusan resmi Anda.",
-    certBtn: "Unduh Sertifikat",
+    certBtn: "Generate Sertifikat",
+    certViewBtn: "Lihat Sertifikat",
     studyMaterialsTab: "Materi Pembelajaran",
     agentSandboxTab: "Asisten AI-Mentor",
     quizVerificationTab: "Kuis Verifikasi",
@@ -557,6 +575,22 @@ const t = {
     certPrint: "Cetak Sertifikat",
     shareLinkedIn: "Tambah ke LinkedIn",
     verifyBtnOpen: "Buka Laman Verifikasi",
+    biodataTitle: "📋 Biodata Mahasiswa",
+    biodataEdit: "✏️ Edit",
+    biodataName: "Nama",
+    biodataWhatsapp: "WhatsApp",
+    biodataBirth: "TTL",
+    biodataOccupation: "Pekerjaan",
+    biodataIncomplete: "⚠️ Biodata Anda belum lengkap!",
+    biodataCompleteBtn: "Lengkapi Sekarang",
+    inviteTitle: "Akses Eksklusif Kelas",
+    inviteDesc: "Mini-Course ini bersifat privat. Silakan masukkan kode undangan (invitation code) Anda yang valid untuk membuka kurikulum dan sertifikat.",
+    invitePlaceholder: "Masukkan Kode Undangan",
+    inviteSubmit: "Buka Akses Kelas",
+    inviteChecking: "Memverifikasi Kode...",
+    inviteErrorInvalid: "❌ Kode undangan tidak valid. Silakan periksa kembali.",
+    inviteErrorLimit: "❌ Kode undangan ini telah mencapai batas maksimum pemakaian.",
+    inviteSuccess: "🎉 Akses dibuka! Selamat belajar di kelas.",
     backToStudy: "Kembali Belajar",
     classroomBtn: "Masuk ke Kelas",
     curriculumBtn: "Lihat Kurikulum",
@@ -1552,6 +1586,12 @@ export default function LensetekAgenticAiLandingPage() {
   const [expandedSession, setExpandedSession] = useState(null); // 'sIdx' or null
   const [chatCount, setChatCount] = useState(0);
   const [chatLastResetDate, setChatLastResetDate] = useState("");
+
+  // Invitation Code States
+  const [inviteInput, setInviteInput] = useState("");
+  const [inviteError, setInviteError] = useState("");
+  const [inviteChecking, setInviteChecking] = useState(false);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
   const [quizFeedback, setQuizFeedback] = useState("");
   
   // Real Agent Lab States
@@ -1624,6 +1664,11 @@ export default function LensetekAgenticAiLandingPage() {
     gender: "Laki-laki",
     occupation: "Mahasiswa / Pelajar"
   });
+  const hasCourseAccess = !!(
+    biodata?.invitationCode ||
+    certificateRecord ||
+    Object.keys(completedModules || {}).length > 0
+  );
 
   const cacheUserProgress = (uid, progressPatch) => {
     try {
@@ -1717,19 +1762,32 @@ export default function LensetekAgenticAiLandingPage() {
       const loadUserProgress = async () => {
         // Try local storage first as instant fallback
         const localProgress = localStorage.getItem(`lensetek_progress_${user.uid}`);
+        let cachedModules = {};
+        let cachedCert = null;
+        let cachedBiodata = null;
+        let cachedInvitationCode = "";
+
         if (localProgress) {
           try {
             const parsed = JSON.parse(localProgress);
-            if (parsed.completedModules) setCompletedModules(parsed.completedModules);
-            if (parsed.certificate) setCertificateRecord(parsed.certificate);
+            if (parsed.completedModules) {
+              cachedModules = parsed.completedModules;
+              setCompletedModules(parsed.completedModules);
+            }
+            if (parsed.certificate) {
+              cachedCert = parsed.certificate;
+              setCertificateRecord(parsed.certificate);
+            }
             if (parsed.chatUsage?.lastResetDate === getTodayStr()) {
               setChatCount(parsed.chatUsage.count || 0);
               setChatLastResetDate(parsed.chatUsage.lastResetDate);
             }
             if (parsed.biodata) {
+              cachedBiodata = parsed.biodata;
               setBiodata(parsed.biodata);
               setBiodataForm(parsed.biodata);
             }
+            cachedInvitationCode = parsed.invitationCode || parsed.biodata?.invitationCode || "";
           } catch (e) {
             console.warn("Parsing Local Storage Progress Error:", e);
           }
@@ -1740,14 +1798,62 @@ export default function LensetekAgenticAiLandingPage() {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setCompletedModules(data.completedModules || {});
+
+            // Smart local-to-cloud progress merge & prevent data loss
+            const firestoreCompletedCount = Object.keys(data.completedModules || {}).length;
+            const localCompletedCount = Object.keys(cachedModules).length;
+
+            let finalCompleted = data.completedModules || {};
+            let finalCert = data.certificate || null;
+            let finalBiodata = data.biodata || null;
+            const finalInvitationCode = data.invitationCode || data.biodata?.invitationCode || cachedInvitationCode;
+            let needsUpload = false;
+
+            if (localCompletedCount > firestoreCompletedCount) {
+              finalCompleted = { ...data.completedModules, ...cachedModules };
+              needsUpload = true;
+            } else {
+              finalCompleted = { ...cachedModules, ...data.completedModules };
+            }
+
+            if (cachedCert && !data.certificate) {
+              finalCert = cachedCert;
+              needsUpload = true;
+            } else if (data.certificate) {
+              finalCert = data.certificate;
+            }
+
+            if (cachedBiodata && !data.biodata) {
+              finalBiodata = cachedBiodata;
+              needsUpload = true;
+            } else if (data.biodata) {
+              finalBiodata = data.biodata;
+            }
+            if (finalInvitationCode) {
+              finalBiodata = {
+                ...(finalBiodata || getDefaultBiodata(user)),
+                invitationCode: finalInvitationCode
+              };
+              if (!data.biodata?.invitationCode || data.invitationCode !== finalInvitationCode) {
+                needsUpload = true;
+              }
+            }
+
+            setCompletedModules(finalCompleted);
+            if (finalCert) setCertificateRecord(finalCert);
+            if (finalBiodata) {
+              setBiodata(finalBiodata);
+              setBiodataForm(finalBiodata);
+            }
+
             cacheUserProgress(user.uid, {
-              completedModules: data.completedModules || {},
+              completedModules: finalCompleted,
               chatUsage: data.chatUsage || {},
-              certificate: data.certificate || null
+              certificate: finalCert,
+              biodata: finalBiodata,
+              invitationCode: finalInvitationCode
             });
-            if (data.certificate) setCertificateRecord(data.certificate);
-            
+
             // Sync chat usage & rate limits
             const todayStr = getTodayStr();
             const chatUsage = data.chatUsage || {};
@@ -1759,43 +1865,48 @@ export default function LensetekAgenticAiLandingPage() {
               setChatLastResetDate(todayStr);
             }
 
-            // Sync biodata
-            if (data.biodata) {
-              setBiodata(data.biodata);
-              setBiodataForm(data.biodata);
-              // Save to local storage cache
-              cacheUserProgress(user.uid, {
-                completedModules: data.completedModules || {},
-                biodata: data.biodata,
-                chatUsage: data.chatUsage || {},
-                certificate: data.certificate || null
-              });
-            } else {
-              setBiodataForm({
-                fullName: data.userName || user.displayName || "",
-                email: data.userEmail || user.email || "",
-                whatsapp: "",
-                birthPlace: "",
-                birthDate: "",
-                gender: "Laki-laki",
-                occupation: "Mahasiswa / Pelajar"
-              });
-              setShowBiodataModal(true);
+            if (needsUpload) {
+              await setDoc(docRef, {
+                completedModules: finalCompleted,
+                biodata: finalBiodata,
+                certificate: finalCert,
+                invitationCode: finalInvitationCode,
+                lastUpdated: serverTimestamp()
+              }, { merge: true });
+            }
+
+            if (finalBiodata && !finalBiodata.invitationCode) {
+              setShowBiodataModal(false);
             }
           } else {
-            setCompletedModules({});
-            setChatCount(0);
-            const todayStr = getTodayStr();
-            setChatLastResetDate(todayStr);
-            setBiodataForm(getDefaultBiodata(user));
-            setShowBiodataModal(true);
-            await saveProgressToCollection({
-              completedModules: {},
-              chatUsage: {
-                count: 0,
-                lastResetDate: todayStr
-              }
-            });
+            // Firestore document doesn't exist, check if we have local progress to migrate/upload!
+            const localCompletedCount = Object.keys(cachedModules).length;
+            if (localCompletedCount > 0 || cachedCert || cachedBiodata) {
+              await setDoc(docRef, {
+                completedModules: cachedModules,
+                biodata: cachedBiodata,
+                certificate: cachedCert,
+                userId: user.uid,
+                userName: cachedBiodata?.fullName || user.displayName || "",
+                userEmail: cachedBiodata?.email || user.email || "",
+                lastUpdated: serverTimestamp()
+              }, { merge: true });
+            } else {
+              // Truly new user setup
+              setCompletedModules({});
+              setChatCount(0);
+              const todayStr = getTodayStr();
+              setChatLastResetDate(todayStr);
+              setBiodataForm(getDefaultBiodata(user));
+              setShowBiodataModal(false);
+              await saveProgressToCollection({
+                completedModules: {},
+                chatUsage: {
+                  count: 0,
+                  lastResetDate: todayStr
+                }
+              });
+            }
           }
         } catch (error) {
           console.error("Firestore Loading Progress Error:", error);
@@ -1807,16 +1918,21 @@ export default function LensetekAgenticAiLandingPage() {
             email: user.email || "",
           }));
 
-          // If there is no biodata stored locally yet, force show the modal
+          // If there is no biodata stored locally yet, force show the modal (only if invitation code verified)
           const localData = localStorage.getItem(`lensetek_progress_${user.uid}`);
           let hasLocalBiodata = false;
+          let hasLocalInvitation = false;
           if (localData) {
             try {
-              hasLocalBiodata = !!JSON.parse(localData).biodata;
+              const parsed = JSON.parse(localData);
+              hasLocalBiodata = !!parsed.biodata;
+              hasLocalInvitation = !!(parsed.invitationCode || parsed.biodata?.invitationCode);
             } catch (e) {}
           }
-          if (!hasLocalBiodata) {
+          if (!hasLocalBiodata && hasLocalInvitation) {
             setShowBiodataModal(true);
+          } else {
+            setShowBiodataModal(false);
           }
         }
       };
@@ -1867,6 +1983,87 @@ export default function LensetekAgenticAiLandingPage() {
 
     setBiodata(completeForm);
     setShowBiodataModal(false);
+  };
+
+  const handleInviteCodeSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+
+    const trimmedInput = inviteInput.trim();
+    if (!trimmedInput) return;
+
+    setInviteChecking(true);
+    setInviteError("");
+
+    try {
+      const invitationCode = trimmedInput.toUpperCase();
+      const codeSnap = await getDoc(doc(db, "invitationCodes", invitationCode));
+
+      if (!codeSnap.exists()) {
+        setInviteError(currentT.inviteErrorInvalid);
+        setInviteChecking(false);
+        return;
+      }
+
+      const matched = {
+        code: invitationCode,
+        limit: Number(codeSnap.data().limit || 1)
+      };
+
+      // Check limit securely in 'invitationUsages' collection by direct document read (prevents collection group permission errors)
+      const usageDocRef = doc(db, "invitationUsages", matched.code);
+      const usageSnap = await getDoc(usageDocRef);
+      let usagesList = [];
+      if (usageSnap.exists()) {
+        usagesList = usageSnap.data().usages || [];
+      }
+
+      const isAlreadyRegistered = usagesList.includes(user.uid);
+
+      if (!isAlreadyRegistered) {
+        if (usagesList.length >= matched.limit) {
+          setInviteError(matched.limit === 1 
+            ? (lang === "EN" ? "❌ This special invitation code has already been claimed by another user." : "❌ Kode undangan spesial ini sudah diklaim oleh pengguna lain.")
+            : currentT.inviteErrorLimit);
+          setInviteChecking(false);
+          return;
+        }
+
+        // Add user UID to list of verified invitation code usages
+        usagesList.push(user.uid);
+        await setDoc(usageDocRef, {
+          code: matched.code,
+          usages: usagesList,
+          lastUpdated: serverTimestamp()
+        }, { merge: true });
+      }
+
+      // Access granted!
+      const currentBiodata = biodata || getDefaultBiodata(user);
+      const updatedBiodata = {
+        ...currentBiodata,
+        invitationCode: matched.code
+      };
+
+      await saveProgressToCollection({
+        biodata: updatedBiodata,
+        invitationCode: matched.code
+      });
+
+      setBiodata(updatedBiodata);
+      setInviteSuccess(true);
+
+      // Trigger transition: if no profile fields completed, show Biodata Modal next
+      if (!biodata || !biodata.whatsapp || !biodata.birthDate) {
+        setBiodataForm(updatedBiodata);
+        setShowBiodataModal(true);
+      }
+    } catch (err) {
+      console.error("Invitation check failed:", err);
+      setInviteError(lang === "EN" ? "❌ Server error. Please try again." : "❌ Eror server. Silakan coba kembali.");
+    } finally {
+      setInviteChecking(false);
+    }
   };
 
   const saveCompletedModules = async (updatedCompleted) => {
@@ -2513,12 +2710,88 @@ export default function LensetekAgenticAiLandingPage() {
 
       {/* DYNAMIC VIEW ROUTING BASED ON LOGIN STATE */}
       {user ? (
-        /* ==================== CLASSROOM DASHBOARD VIEW ==================== */
-        <motion.section 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mx-auto max-w-7xl px-6 py-12 lg:px-8 print-section"
-        >
+        !hasCourseAccess ? (
+          /* ==================== INVITATION CODE ENTRY SCREEN ==================== */
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mx-auto max-w-md px-6 py-20 font-sans text-center"
+          >
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-2xl space-y-6 text-slate-800 relative">
+              <div className="mx-auto h-16 w-16 bg-amber-100 rounded-3xl flex items-center justify-center text-3xl shadow-inner animate-bounce">
+                🔑
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-black text-[#091A36] font-['Plus_Jakarta_Sans']">
+                  {currentT.inviteTitle}
+                </h2>
+                <p className="text-xs text-slate-500 font-bold leading-relaxed">
+                  {currentT.inviteDesc}
+                </p>
+              </div>
+
+              <form onSubmit={handleInviteCodeSubmit} className="space-y-4 text-left">
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5">
+                    {lang === "EN" ? "Invitation Code" : "Kode Undangan"}
+                  </label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder={currentT.invitePlaceholder}
+                    value={inviteInput}
+                    onChange={(e) => {
+                      setInviteInput(e.target.value);
+                      setInviteError("");
+                    }}
+                    disabled={inviteChecking || inviteSuccess}
+                    className="w-full bg-white border border-slate-250 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 shadow-inner tracking-widest text-center uppercase"
+                  />
+                </div>
+
+                {inviteError && (
+                  <p className="text-xs font-bold text-rose-500 bg-rose-50 border border-rose-200 rounded-xl p-3.5 leading-snug">
+                    {inviteError}
+                  </p>
+                )}
+
+                {inviteSuccess && (
+                  <p className="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-250 rounded-xl p-3.5 leading-snug">
+                    {currentT.inviteSuccess}
+                  </p>
+                )}
+
+                <button 
+                  type="submit" 
+                  disabled={inviteChecking || inviteSuccess || !inviteInput.trim()}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-4 rounded-2xl text-xs transition-all shadow-md cursor-pointer text-center disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {inviteChecking ? (
+                    <span>⏳ {currentT.inviteChecking}</span>
+                  ) : (
+                    <span>🚀 {currentT.inviteSubmit}</span>
+                  )}
+                </button>
+              </form>
+
+              {/* Logout option if they want to leave */}
+              <div className="pt-2">
+                <button 
+                  onClick={handleLogout}
+                  className="text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors"
+                >
+                  {lang === "EN" ? "Logout & Exit" : "Keluar & Batalkan"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          /* ==================== CLASSROOM DASHBOARD VIEW ==================== */
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto max-w-7xl px-6 py-12 lg:px-8 print-section"
+          >
           {/* Welcome Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-cyan-50 to-indigo-50/50 border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm mb-8 font-sans no-print">
             <div>
@@ -2588,7 +2861,7 @@ export default function LensetekAgenticAiLandingPage() {
               {/* Student Biodata Status Card */}
               <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm text-left font-sans">
                 <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
-                  <h4 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">📋 Biodata Mahasiswa</h4>
+                  <h4 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">{currentT.biodataTitle}</h4>
                   {!certificateRecord && (
                     <button 
                       onClick={() => {
@@ -2605,25 +2878,25 @@ export default function LensetekAgenticAiLandingPage() {
                       }}
                       className="text-[10px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors cursor-pointer"
                     >
-                      ✏️ Edit
+                      {currentT.biodataEdit}
                     </button>
                   )}
                 </div>
                 {biodata ? (
                   <div className="space-y-2 text-[11px] text-slate-600 font-semibold">
-                    <p><span className="text-slate-400 font-medium">Nama:</span> {biodata.fullName}</p>
-                    <p><span className="text-slate-400 font-medium">WhatsApp:</span> {biodata.whatsapp || "-"}</p>
-                    <p><span className="text-slate-400 font-medium">TTL:</span> {biodata.birthPlace}, {biodata.birthDate}</p>
-                    <p><span className="text-slate-400 font-medium">Pekerjaan:</span> {biodata.occupation}</p>
+                    <p><span className="text-slate-400 font-medium">{currentT.biodataName}:</span> {biodata.fullName}</p>
+                    <p><span className="text-slate-400 font-medium">{currentT.biodataWhatsapp}:</span> {biodata.whatsapp || "-"}</p>
+                    <p><span className="text-slate-400 font-medium">{currentT.biodataBirth}:</span> {biodata.birthPlace}, {biodata.birthDate}</p>
+                    <p><span className="text-slate-400 font-medium">{currentT.biodataOccupation}:</span> {biodata.occupation}</p>
                   </div>
                 ) : (
                   <div className="text-[11px] text-rose-500 font-bold flex flex-col gap-2">
-                    <p className="flex items-center gap-1.5">⚠️ Biodata Anda belum lengkap!</p>
+                    <p className="flex items-center gap-1.5">{currentT.biodataIncomplete}</p>
                     <button 
                       onClick={() => setShowBiodataModal(true)} 
                       className="bg-amber-100 hover:bg-amber-200 border border-amber-200 text-slate-900 px-3 py-2 rounded-xl font-extrabold text-[10px] text-center w-full cursor-pointer transition-colors"
                     >
-                      Lengkapi Sekarang
+                      {currentT.biodataCompleteBtn}
                     </button>
                   </div>
                 )}
@@ -2639,7 +2912,9 @@ export default function LensetekAgenticAiLandingPage() {
                 <button
                   disabled={!allModulesCompleted}
                   onClick={() => {
-                    ensureCertificateRecord();
+                    if (!certificateRecord) {
+                      ensureCertificateRecord();
+                    }
                     setClassroomTab("certificate");
                   }}
                   className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-extrabold transition-all ${
@@ -2648,7 +2923,7 @@ export default function LensetekAgenticAiLandingPage() {
                       : 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
                 >
-                  {currentT.certBtn}
+                  {certificateRecord ? currentT.certViewBtn : currentT.certBtn}
                 </button>
               </div>
             </div>
@@ -3335,6 +3610,7 @@ export default function LensetekAgenticAiLandingPage() {
             </div>
           </div>
         </motion.section>
+        )
       ) : (
         /* ==================== PUBLIC HIGH-FIDELITY LANDING PAGE VIEW ==================== */
         <div className="bg-[#FCFAF7] min-h-screen text-slate-800 selection:bg-amber-400 selection:text-slate-950 font-sans">
