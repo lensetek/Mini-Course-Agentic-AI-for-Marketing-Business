@@ -1,96 +1,96 @@
 # Mini Course: Agentic AI for Marketing & Business
 
-Aplikasi web pembelajaran interaktif untuk mini course **Agentic AI for Marketing & Business** dari Lensetek International. Aplikasi ini menggabungkan landing page, student classroom, modul belajar bilingual, quiz verification, certificate flow, dan AI Mentor sandbox berbasis server.
+An interactive web learning platform for the **Agentic AI for Marketing & Business** mini course by Lensetek International. The app combines a course landing page, student classroom, bilingual learning modules, quiz verification, certificate flow, and a server-side AI Mentor sandbox.
 
-Target utama aplikasi ini adalah membantu marketer, owner bisnis, operator, consultant, educator, dan tim perusahaan memahami cara merancang workflow AI agent tanpa harus memulai dari coding.
+The platform is designed for marketers, business owners, operators, consultants, educators, and enterprise teams who want to learn how to design AI agent workflows without starting from code.
 
-## Deskripsi Aplikasi
+## App Overview
 
-Platform ini berfungsi sebagai:
+The platform includes:
 
-- **Landing page course** untuk menjelaskan manfaat, use case, kompetensi, dan kurikulum.
-- **Student classroom** dengan akses privat menggunakan invitation code.
-- **Modul belajar bilingual** dalam Bahasa Indonesia dan English.
-- **Interactive AI Sandbox Lab** untuk menjalankan AI Mentor sesuai konteks modul.
-- **Quiz verification** untuk memvalidasi pemahaman di tiap modul.
-- **Certificate of Completion** setelah seluruh module challenge selesai.
-- **Certificate verification page** untuk mengecek kredensial sertifikat.
-- **Student profile management** menggunakan Firebase Authentication dan Firestore.
+- **Course landing page** for benefits, use cases, competencies, and curriculum overview.
+- **Student classroom** with private access through invitation codes.
+- **Bilingual learning modules** in English and Bahasa Indonesia.
+- **Interactive AI Sandbox Lab** for running an AI Mentor in the context of each module.
+- **Quiz verification** to validate understanding in each module.
+- **Certificate of Completion** after all module challenges are completed.
+- **Certificate verification page** for checking certificate credentials.
+- **Student profile management** using Firebase Authentication and Firestore.
 
-## Isi Modul Aplikasi
+## Course Modules
 
-Course terdiri dari 5 modul utama dengan total 20 jam pembelajaran:
+The course contains 5 main modules with a total of 20 learning hours:
 
 1. **Foundations of Agentic AI**
    - Chatbots vs autonomous agents.
    - Custom AI assistants / Gemini Gems.
-   - Chain-of-thought dan structured reasoning workflow.
+   - Chain-of-thought and structured reasoning workflows.
 
 2. **Workflows & Multi-Agent Systems**
-   - Desain specialized AI assistants.
-   - Collaborative multi-agent workflow.
-   - Reviewer agent, guardrails, dan human-in-the-loop checkpoint.
+   - Designing specialized AI assistants.
+   - Collaborative multi-agent workflows.
+   - Reviewer agents, guardrails, and human-in-the-loop checkpoints.
 
 3. **Marketing Automation**
-   - Automated SEO writing workflow.
-   - Trend research dan competitor tracking.
+   - Automated SEO writing workflows.
+   - Trend research and competitor tracking.
    - Competitor SWOT automation.
 
 4. **Business Operations with Google Opal**
-   - Visual AI mini-apps dengan drag-and-drop workflow.
+   - Visual AI mini-apps with drag-and-drop workflows.
    - Sales outreach automation.
-   - Lead scoring dan operasional UMKM.
+   - Lead scoring and SME operations.
 
 5. **Low-Code Deployments & Launch**
-   - Low-code connections dan automation triggers.
-   - Monitoring kuota, biaya, dan usage limit.
-   - Security checklist sebelum rilis produksi.
+   - Low-code connections and automation triggers.
+   - Quota, cost, and usage-limit monitoring.
+   - Security checklist before production release.
 
-## Fitur Utama
+## Key Features
 
-- Login / register menggunakan Google via Firebase Authentication.
-- Akses kelas privat menggunakan invitation code.
-- Penyimpanan progress, biodata, dan sertifikat di Firestore.
-- Materi belajar per modul dengan session breakdown.
-- Quiz per modul untuk membuka progress course.
-- AI Mentor sandbox melalui backend Express agar OpenAI API key tidak terekspos di frontend.
-- Certificate generator dan verification URL.
-- Responsive UI dengan React, Vite, Tailwind CSS, Framer Motion, dan Lucide React.
+- Google login / registration via Firebase Authentication.
+- Private classroom access through invitation codes.
+- Progress, biodata, and certificate storage in Firestore.
+- Learning materials with session breakdowns for each module.
+- Module quizzes to unlock course progress.
+- AI Mentor sandbox through an Express backend so the OpenAI API key is not exposed in the frontend.
+- Certificate generator and verification URL.
+- Responsive UI with React, Vite, Tailwind CSS, Framer Motion, and Lucide React.
 
 ## Tech Stack
 
 - **Frontend**: React, Vite, Tailwind CSS, Framer Motion
-- **Backend local API**: Express.js
+- **Local backend API**: Express.js
 - **AI runtime**: OpenAI Agents SDK
 - **Authentication & database**: Firebase Authentication, Firestore, Firebase Analytics
 - **Icons**: Lucide React
 - **Build tools**: Vite, ESLint
 
-## Cara Install
+## Installation
 
-### Prasyarat
+### Prerequisites
 
-- Node.js 18 atau lebih baru.
+- Node.js 18 or newer.
 - npm.
-- Firebase project dengan Authentication dan Firestore aktif.
-- OpenAI API key untuk menjalankan AI Mentor sandbox.
+- A Firebase project with Authentication and Firestore enabled.
+- An OpenAI API key to run the AI Mentor sandbox.
 
-### 1. Clone Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/lensetek/Mini-Course-Agentic-AI-for-Marketing-Business.git
 cd Mini-Course-Agentic-AI-for-Marketing-Business
 ```
 
-### 2. Install Dependency
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Setup Environment
+### 3. Set Up Environment Variables
 
-Buat file `.env.local` di root project. Jangan commit file ini ke repository.
+Create a `.env.local` file in the project root. Do not commit this file to the repository.
 
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
@@ -107,84 +107,85 @@ OPENAI_MODEL=gpt-4.1-nano
 PORT=3001
 ```
 
-Catatan security:
+Security notes:
 
-- Variable dengan prefix `VITE_` akan dibundel ke frontend oleh Vite. Gunakan hanya untuk konfigurasi public client seperti Firebase web config.
-- Jangan pernah menyimpan OpenAI API key dalam variable `VITE_`.
-- OpenAI key harus tetap di backend melalui `OPENAI_API`, lalu dipakai oleh `server.js`.
-- `.env.local`, `.env`, dan file env lain sudah di-ignore oleh `.gitignore`.
+- Variables with the `VITE_` prefix are bundled into the frontend by Vite. Use them only for public client configuration such as Firebase web config.
+- Never store the OpenAI API key in a `VITE_` variable.
+- The OpenAI key must stay on the backend through `OPENAI_API`, where it is used by `server.js`.
+- `.env.local`, `.env`, and other env files are ignored by `.gitignore`.
+- Invitation codes should be stored in Firestore, not in frontend environment variables.
 
-### 4. Jalankan Backend AI Mentor
+### 4. Run the AI Mentor Backend
 
-Buka terminal pertama:
+Open the first terminal:
 
 ```bash
 npm run server
 ```
 
-Backend berjalan di:
+The backend runs at:
 
 ```text
 http://localhost:3001
 ```
 
-Endpoint AI Mentor:
+AI Mentor endpoint:
 
 ```text
 POST http://localhost:3001/api/agent/run
 ```
 
-### 5. Jalankan Frontend
+### 5. Run the Frontend
 
-Buka terminal kedua:
+Open a second terminal:
 
 ```bash
 npm run dev
 ```
 
-Frontend berjalan di:
+The frontend runs at:
 
 ```text
 http://localhost:5173
 ```
 
-## Script yang Tersedia
+## Available Scripts
 
 ```bash
 npm run dev
 ```
 
-Menjalankan frontend Vite untuk development.
+Runs the Vite frontend for development.
 
 ```bash
 npm run server
 ```
 
-Menjalankan backend Express untuk AI Mentor sandbox.
+Runs the Express backend for the AI Mentor sandbox.
 
 ```bash
 npm run build
 ```
 
-Membuat production build frontend.
+Creates a production build of the frontend.
 
 ```bash
 npm run preview
 ```
 
-Menjalankan preview build Vite.
+Runs the Vite production preview.
 
 ```bash
 npm run lint
 ```
 
-Menjalankan ESLint.
+Runs ESLint.
 
 ## Deployment
 
-Frontend dapat dideploy ke Firebase Hosting, Vercel, Netlify, atau platform static hosting lain yang mendukung Vite. Backend `server.js` perlu dideploy sebagai Node.js service terpisah jika AI Mentor sandbox ingin aktif di production.
+The frontend can be deployed to Firebase Hosting, Vercel, Netlify, or another static hosting platform that supports Vite. The `server.js` backend should be deployed as a separate Node.js service if the AI Mentor sandbox needs to be available in production.
 
-Pastikan secret seperti `OPENAI_API` hanya disimpan di environment backend, bukan di frontend hosting config.
+Make sure secrets such as `OPENAI_API` are stored only in the backend environment, never in the frontend hosting configuration.
 
 ## License
 
