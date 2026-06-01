@@ -1,16 +1,72 @@
-# React + Vite
+# Mini Course: Agentic AI for Marketing & Business
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive, web-based educational platform designed to teach marketers, business owners, and operational managers how to deploy and orchestrate Agentic AI systems. Built with React (Vite), Tailwind CSS, and Firebase.
 
-Currently, two official plugins are available:
+## Product Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The platform serves as both a landing page and a student learning dashboard. It introduces participants to the core concepts of multi-agent orchestration without requiring prior coding experience.
 
-## React Compiler
+### Key Features
+- **Bilingual Interface**: Support for both English and Indonesian.
+- **Student Dashboard**: Track learning progress through 5 comprehensive modules.
+- **Interactive AI Sandbox**: A simulated terminal to run AI agents and get hands-on experience orchestrating tasks like market research, content writing, and SEO optimization.
+- **Firebase Authentication**: Secure Google Login integration.
+- **Automated Certification System**:
+  - Dynamically generates professional Certificates of Completion and Transcripts upon passing all module quizzes.
+  - Generates verifiable QR codes embedded into the certificate.
+  - Built-in, publicly accessible certificate verification page to check the authenticity of a certificate.
+- **Student Biodata Management**: Collects and locks participant identities to prevent certificate forgery.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Technology Stack
+- **Frontend**: React.js (Vite), Tailwind CSS, Framer Motion
+- **Backend & Database**: Firebase Authentication, Firestore Database
+- **Icons**: Lucide React
+- **PDF/Image Generation**: `html2canvas`, `jspdf`
+- **QR Code**: `qrcode.react`
 
-## Expanding the ESLint configuration
+## Installation Guide
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Follow these instructions to run the project locally.
+
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- A Firebase Project (with Authentication and Firestore Database enabled)
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/lensetek/Mini-Course-Agentic-AI-for-Marketing-Business.git
+cd Mini-Course-Agentic-AI-for-Marketing-Business
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+*(Alternatively, you can use `yarn install` or `pnpm install`)*
+
+### 3. Set Up Environment Variables
+Create a `.env.local` file in the root directory by copying the `.env.example` file:
+```bash
+cp .env.example .env.local
+```
+Fill in the Firebase configuration values in `.env.local` based on your Firebase Console settings:
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+The application will be running at `http://localhost:5173`.
+
+## Deployment
+This project is built with Vite and can be easily deployed to services like Vercel, Netlify, or Firebase Hosting. Ensure that you set up your Firebase environment variables on your deployment platform.
+
+## License
+&copy; 2026 Lensetek International, LLC. All rights reserved.

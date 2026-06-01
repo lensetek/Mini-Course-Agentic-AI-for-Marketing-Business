@@ -215,6 +215,18 @@ const ChatGPTIcon = (props) => (
   </svg>
 );
 
+const LinkedInIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+  </svg>
+);
+
 // Translation Dictionary
 const t = {
   EN: {
@@ -271,6 +283,8 @@ const t = {
     certIssued: "Issued By",
     certDate: "Date of Graduation",
     certPrint: "Print Certificate",
+    shareLinkedIn: "Add to LinkedIn",
+    verifyBtnOpen: "Open Verification Page",
     backToStudy: "Back to Study",
     classroomBtn: "Go to Classroom",
     curriculumBtn: "Go to Curriculum",
@@ -541,6 +555,8 @@ const t = {
     certIssued: "Penerbit Sertifikat",
     certDate: "Tanggal Kelulusan",
     certPrint: "Cetak Sertifikat",
+    shareLinkedIn: "Tambah ke LinkedIn",
+    verifyBtnOpen: "Buka Laman Verifikasi",
     backToStudy: "Kembali Belajar",
     classroomBtn: "Masuk ke Kelas",
     curriculumBtn: "Lihat Kurikulum",
@@ -1572,6 +1588,33 @@ export default function LensetekAgenticAiLandingPage() {
   const createCertificateNo = (uid) =>
     `LAIMB-${new Date().getFullYear()}-${uid.slice(0, 6).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
 
+  const getDynamicVerificationUrl = (record) => {
+    if (!record) return "";
+    const baseOrigin = import.meta.env.VITE_CREDENTIAL_URL || window.location.origin;
+    const sanitizedBase = baseOrigin.endsWith("/") ? baseOrigin.slice(0, -1) : baseOrigin;
+    return `${sanitizedBase}/verify/${record.certificateNo}`;
+  };
+
+  const getLinkedInShareUrl = (record) => {
+    if (!record) return "";
+    const completionDate = new Date(record.completionDate);
+    const issueYear = completionDate.getFullYear();
+    const issueMonth = completionDate.getMonth() + 1; // 1-indexed
+
+    const baseUrl = "https://www.linkedin.com/profile/add";
+    const params = new URLSearchParams({
+      startTask: "CERTIFICATION_NAME",
+      name: record.courseTitle || "Agentic AI for Marketing & Business",
+      organizationName: record.institution || "Lensetek International, LLC",
+      issueYear: issueYear.toString(),
+      issueMonth: issueMonth.toString(),
+      certId: record.certificateNo,
+      certUrl: getDynamicVerificationUrl(record)
+    });
+
+    return `${baseUrl}?${params.toString()}`;
+  };
+
   const getDefaultBiodata = (currentUser) => ({
     fullName: currentUser?.displayName || "",
     email: currentUser?.email || "",
@@ -1620,7 +1663,9 @@ export default function LensetekAgenticAiLandingPage() {
     validUntil.setFullYear(validUntil.getFullYear() + 1);
 
     const certificateNo = existingCertificateNo || createCertificateNo(user.uid);
-    const verificationUrl = `${window.location.origin}/verify/${certificateNo}`;
+    const baseOrigin = import.meta.env.VITE_CREDENTIAL_URL || window.location.origin;
+    const sanitizedBase = baseOrigin.endsWith("/") ? baseOrigin.slice(0, -1) : baseOrigin;
+    const verificationUrl = `${sanitizedBase}/verify/${certificateNo}`;
     const holderName = biodata?.fullName || user.displayName || "Participant";
 
     return {
@@ -3258,13 +3303,22 @@ export default function LensetekAgenticAiLandingPage() {
                       {/* Action buttons (No Print) */}
                       <div className="flex flex-wrap justify-center gap-3 no-print">
                         <a
-                          href={certificateRecord.verificationUrl}
+                          href={getDynamicVerificationUrl(certificateRecord)}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-6 py-3 text-xs font-bold text-cyan-700 shadow-sm hover:bg-cyan-100 transition-all"
                         >
                           <ShieldCheck className="h-4 w-4" />
-                          Buka Laman Verifikasi
+                          {currentT.verifyBtnOpen}
+                        </a>
+                        <a
+                          href={getLinkedInShareUrl(certificateRecord)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 rounded-xl bg-[#0a66c2] text-white px-6 py-3 text-xs font-bold shadow-md hover:bg-[#004182] transition-all hover:scale-[1.01]"
+                        >
+                          <LinkedInIcon className="h-4 w-4 shrink-0" />
+                          {currentT.shareLinkedIn}
                         </a>
                         <button
                           onClick={() => window.print()}
