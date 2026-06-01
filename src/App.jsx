@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -1608,6 +1608,7 @@ export default function LensetekAgenticAiLandingPage() {
   const [certificateRecord, setCertificateRecord] = useState(null);
   const [verificationRecord, setVerificationRecord] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
+  const publishedCertificateRef = useRef(new Set());
   const [biodataForm, setBiodataForm] = useState({
     fullName: "",
     email: "",
@@ -1737,18 +1738,42 @@ export default function LensetekAgenticAiLandingPage() {
     };
   };
 
+  const publishCertificateRecord = async (record) => {
+    if (!user || !record?.certificateNo) return;
+
+    const publishKey = `${user.uid}:${record.certificateNo}`;
+    if (publishedCertificateRef.current.has(publishKey)) return;
+    publishedCertificateRef.current.add(publishKey);
+
+    const publicRecord = {
+      ...record,
+      verificationUrl: getDynamicVerificationUrl(record)
+    };
+
+    try {
+      await setDoc(doc(db, "certificates", publicRecord.certificateNo), {
+        ...publicRecord,
+        lastUpdated: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      publishedCertificateRef.current.delete(publishKey);
+      console.error("Certificate Publishing Error:", error);
+    }
+  };
+
   const ensureCertificateRecord = async () => {
-    if (!user || certificateRecord) return certificateRecord;
+    if (!user) return null;
+    if (certificateRecord) {
+      await publishCertificateRecord(certificateRecord);
+      return certificateRecord;
+    }
 
     const record = buildCertificateRecord();
     setCertificateRecord(record);
     cacheUserProgress(user.uid, { certificate: record });
 
     try {
-      await setDoc(doc(db, "certificates", record.certificateNo), {
-        ...record,
-        lastUpdated: serverTimestamp()
-      }, { merge: true });
+      await publishCertificateRecord(record);
       await saveProgressToCollection({ certificate: record });
     } catch (error) {
       console.error("Certificate Saving Error:", error);
@@ -2296,6 +2321,12 @@ export default function LensetekAgenticAiLandingPage() {
       ensureCertificateRecord();
     }
   }, [classroomTab, allModulesCompleted, user, certificateRecord]);
+
+  useEffect(() => {
+    if (user && certificateRecord?.certificateNo) {
+      publishCertificateRecord(certificateRecord);
+    }
+  }, [user, certificateRecord?.certificateNo]);
 
   if (isVerificationPage) {
     return (
