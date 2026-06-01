@@ -20,6 +20,8 @@ app.use(express.json());
 const PORT = process.env.PORT || 3001;
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4.1-nano';
 const distDir = path.resolve(__dirname, 'dist');
+const noCacheHeader = 'no-cache, no-store, must-revalidate';
+const immutableCacheHeader = 'public, max-age=31536000, immutable';
 
 app.post('/api/agent/run', async (req, res) => {
   const { message, agentName, instructions } = req.body;
@@ -55,13 +57,25 @@ app.post('/api/agent/run', async (req, res) => {
   }
 });
 
-app.use(express.static(distDir));
+app.use(express.static(distDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+      res.setHeader('Cache-Control', immutableCacheHeader);
+      return;
+    }
+
+    if (path.basename(filePath) === 'index.html') {
+      res.setHeader('Cache-Control', noCacheHeader);
+    }
+  }
+}));
 
 app.use((req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api/')) {
     return next();
   }
 
+  res.setHeader('Cache-Control', noCacheHeader);
   res.sendFile(path.join(distDir, 'index.html'));
 });
 

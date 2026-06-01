@@ -30,7 +30,8 @@ import {
   ListChecks,
   Network,
   User,
-  TrendingUp
+  TrendingUp,
+  Download
 } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
@@ -285,7 +286,10 @@ const t = {
     certIssued: "Issued By",
     certDate: "Date of Graduation",
     certPrint: "Print Certificate",
-    shareLinkedIn: "Add to LinkedIn",
+    certDownloadPdf: "Download PDF",
+    certDownloadingPdf: "Preparing PDF...",
+    shareLinkedIn: "Download PDF + Add to LinkedIn",
+    linkedInPreparing: "Preparing LinkedIn...",
     verifyBtnOpen: "Open Verification Page",
     biodataTitle: "📋 Student Profile",
     biodataEdit: "✏️ Edit",
@@ -574,7 +578,10 @@ const t = {
     certIssued: "Penerbit Sertifikat",
     certDate: "Tanggal Kelulusan",
     certPrint: "Cetak Sertifikat",
-    shareLinkedIn: "Tambah ke LinkedIn",
+    certDownloadPdf: "Download PDF",
+    certDownloadingPdf: "Menyiapkan PDF...",
+    shareLinkedIn: "Download PDF + Tambah ke LinkedIn",
+    linkedInPreparing: "Menyiapkan LinkedIn...",
     verifyBtnOpen: "Buka Laman Verifikasi",
     biodataTitle: "📋 Biodata Mahasiswa",
     biodataEdit: "✏️ Edit",
@@ -1607,9 +1614,13 @@ export default function LensetekAgenticAiLandingPage() {
   const [biodata, setBiodata] = useState(null);
   const [certificateRecord, setCertificateRecord] = useState(null);
   const [certificateRefreshAfterBiodata, setCertificateRefreshAfterBiodata] = useState(false);
+  const [certificatePdfLoading, setCertificatePdfLoading] = useState(false);
+  const [linkedInLoading, setLinkedInLoading] = useState(false);
   const [verificationRecord, setVerificationRecord] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const publishedCertificateRef = useRef(new Set());
+  const certificatePageRef = useRef(null);
+  const transcriptPageRef = useRef(null);
   const [biodataForm, setBiodataForm] = useState({
     fullName: "",
     email: "",
@@ -1656,6 +1667,262 @@ export default function LensetekAgenticAiLandingPage() {
     });
 
     return `${baseUrl}?${params.toString()}`;
+  };
+
+  const getQrCodeModule = (qrCodeModule) => qrCodeModule.default || qrCodeModule;
+
+  const createPdfQr = async (qrCodeModule, value, width = 220) => {
+    const QRCode = getQrCodeModule(qrCodeModule);
+    if (!QRCode?.toDataURL) throw new Error("QR generator is unavailable.");
+
+    return QRCode.toDataURL(value, {
+      errorCorrectionLevel: "M",
+      margin: 1,
+      width,
+      color: {
+        dark: "#091A36",
+        light: "#FFFFFF"
+      }
+    });
+  };
+
+  const loadPdfAsset = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Unable to load PDF asset: ${url}`);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const fitPdfFontSize = (pdf, text, maxWidth, startSize, minSize = 8) => {
+    let size = startSize;
+    pdf.setFontSize(size);
+
+    while (pdf.getTextWidth(text) > maxWidth && size > minSize) {
+      size -= 1;
+      pdf.setFontSize(size);
+    }
+
+    return size;
+  };
+
+  const drawPdfText = (pdf, text, x, y, options = {}) => {
+    pdf.setFont(options.font || "helvetica", options.style || "normal");
+    pdf.setFontSize(options.size || 10);
+    pdf.setTextColor(options.color || "#091A36");
+    pdf.text(text, x, y, {
+      align: options.align || "left",
+      baseline: options.baseline || "alphabetic",
+      maxWidth: options.maxWidth
+    });
+  };
+
+  const drawPdfCard = (pdf, x, y, width, height, radius = 2) => {
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(226, 232, 240);
+    pdf.roundedRect(x, y, width, height, radius, radius, "FD");
+  };
+
+  const drawCertificatePdfPage = async (pdf, record, qrCodeModule) => {
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const templateDataUrl = await loadPdfAsset("/cert-template.png");
+    const templateRatio = 1536 / 1080;
+    const templateWidth = pageHeight * templateRatio;
+    const templateX = (pageWidth - templateWidth) / 2;
+    const tx = (percent) => templateX + templateWidth * percent;
+    const ty = (percent) => pageHeight * percent;
+    const tw = (percent) => templateWidth * percent;
+    const th = (percent) => pageHeight * percent;
+
+    pdf.addImage(templateDataUrl, "PNG", templateX, 0, templateWidth, pageHeight);
+
+    drawPdfCard(pdf, tx(0.745), ty(0.064), tw(0.19), th(0.055), 2);
+    drawPdfText(pdf, "Certificate No.", tx(0.923), ty(0.085), { align: "right", size: 6, style: "bold", color: "#64748B" });
+    drawPdfText(pdf, record.certificateNo, tx(0.923), ty(0.109), { align: "right", size: 7.5, font: "courier", style: "bold" });
+
+    pdf.setFont("times", "bold");
+    fitPdfFontSize(pdf, record.holderName, tw(0.7), 31, 16);
+    pdf.setTextColor("#091A36");
+    pdf.text(record.holderName, pageWidth / 2, ty(0.442), { align: "center", baseline: "middle", maxWidth: tw(0.7) });
+
+    const signatureQr = await createPdfQr(
+      qrCodeModule,
+      `Digitally signed by Astrid, Program Director, Lensetek International, LLC. Certificate: ${record.certificateNo}`,
+      220
+    );
+    drawPdfCard(pdf, tx(0.242), ty(0.812), th(0.078), th(0.078), 2);
+    pdf.addImage(signatureQr, "PNG", tx(0.247), ty(0.817), th(0.068), th(0.068));
+    drawPdfText(pdf, "Astrid", tx(0.323), ty(0.858), { font: "times", style: "bold", size: 13 });
+    drawPdfText(pdf, "QR Signature", tx(0.323), ty(0.875), { style: "bold", size: 5.5, color: "#94A3B8" });
+
+    drawPdfCard(pdf, tx(0.44), ty(0.898), tw(0.165), th(0.064), 2.5);
+    drawPdfText(pdf, "Valid Until", tx(0.5225), ty(0.921), { align: "center", size: 5.5, style: "bold", color: "#94A3B8" });
+    drawPdfText(pdf, formatDisplayDate(record.validUntil, "en-US"), tx(0.5225), ty(0.946), { align: "center", size: 8.5, style: "bold" });
+
+    drawPdfCard(pdf, tx(0.615), ty(0.898), tw(0.175), th(0.064), 2.5);
+    drawPdfText(pdf, "Date of Completion", tx(0.7025), ty(0.921), { align: "center", size: 5.5, style: "bold", color: "#94A3B8" });
+    drawPdfText(pdf, formatDisplayDate(record.completionDate, "en-US"), tx(0.7025), ty(0.946), { align: "center", size: 8.5, style: "bold" });
+
+    const verificationQr = await createPdfQr(qrCodeModule, getDynamicVerificationUrl(record), 260);
+    drawPdfCard(pdf, tx(0.845), ty(0.862), th(0.112), th(0.112), 2.5);
+    pdf.addImage(verificationQr, "PNG", tx(0.854), ty(0.87), th(0.084), th(0.084));
+    drawPdfText(pdf, "Verify", tx(0.901), ty(0.961), { align: "center", size: 5.5, style: "bold", color: "#0891B2" });
+  };
+
+  const drawTranscriptPdfPage = async (pdf, record, qrCodeModule) => {
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 14;
+    const contentWidth = pageWidth - margin * 2;
+    const modules = [
+      ["1", "Foundations of Agentic AI & Paradigm Shift", "3 Hours", "Understand core concepts of Agentic AI, agent architecture, memory, tools, and autonomous action.", "Completed"],
+      ["2", "Core Skills & Workflow Architecture", "4 Hours", "Master advanced prompt engineering, persona design, guardrails, and workflow orchestration.", "Completed"],
+      ["3", "Agentic AI for Marketing Automation", "5 Hours", "Build autonomous systems for content marketing, SEO research, competitor intelligence, and reporting.", "Completed"],
+      ["4", "Agentic AI for Business Operations & SMEs", "5 Hours", "Design agents for support, lead qualification, data analysis, and business operations automation.", "Completed"],
+      ["5", "No-Code Implementation & Final Evaluation", "3 Hours", "Deploy workflows using no-code platforms, evaluate performance, manage costs, and present a showcase.", "Completed"]
+    ];
+
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+    pdf.setDrawColor(226, 232, 240);
+    pdf.roundedRect(margin, 10, contentWidth, pageHeight - 20, 3, 3, "S");
+
+    drawPdfText(pdf, "Official Transcript", margin + 8, 23, { size: 7, style: "bold", color: "#0E7490" });
+    drawPdfText(pdf, "Academic Transcript of Course Completion", margin + 8, 32, { size: 15, style: "bold" });
+    drawPdfText(pdf, record.certificateNo, pageWidth - margin - 8, 28, { align: "right", font: "courier", size: 8, style: "bold", color: "#64748B" });
+    pdf.line(margin + 8, 38, pageWidth - margin - 8, 38);
+
+    drawPdfCard(pdf, margin + 8, 46, 124, 40, 2);
+    drawPdfText(pdf, "Participant", margin + 14, 57, { size: 6.5, style: "bold", color: "#94A3B8" });
+    drawPdfText(pdf, record.holderName, margin + 48, 57, { size: 9, style: "bold" });
+    drawPdfText(pdf, "Course", margin + 14, 67, { size: 6.5, style: "bold", color: "#94A3B8" });
+    drawPdfText(pdf, "Agentic AI for Marketing & Business", margin + 48, 67, { size: 8, style: "bold" });
+    drawPdfText(pdf, "Duration", margin + 14, 77, { size: 6.5, style: "bold", color: "#94A3B8" });
+    drawPdfText(pdf, "20 Hours", margin + 48, 77, { size: 8, style: "bold" });
+
+    drawPdfCard(pdf, margin + 140, 46, contentWidth - 148, 40, 2);
+    drawPdfText(pdf, "Summary", margin + 140 + (contentWidth - 148) / 2, 57, { align: "center", size: 7, style: "bold", color: "#64748B" });
+    drawPdfText(pdf, "5 Modules", margin + 163, 72, { align: "center", size: 11, style: "bold" });
+    drawPdfText(pdf, "Completed Satisfactory", margin + 218, 72, { align: "center", size: 10, style: "bold", color: "#059669" });
+
+    const tableX = margin + 8;
+    let y = 98;
+    const col = [12, 62, 22, 92, 30];
+    const headers = ["No.", "Module", "Duration", "Description", "Performance"];
+    pdf.setFillColor(9, 26, 54);
+    pdf.rect(tableX, y, contentWidth - 16, 10, "F");
+    let x = tableX;
+    headers.forEach((header, idx) => {
+      drawPdfText(pdf, header, x + 3, y + 6.6, { size: 6, style: "bold", color: "#FFFFFF" });
+      x += col[idx];
+    });
+    y += 10;
+
+    modules.forEach((row, rowIdx) => {
+      const rowHeight = 18;
+      pdf.setFillColor(rowIdx % 2 ? 248 : 255, rowIdx % 2 ? 250 : 255, rowIdx % 2 ? 252 : 255);
+      pdf.rect(tableX, y, contentWidth - 16, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(tableX, y + rowHeight, tableX + contentWidth - 16, y + rowHeight);
+
+      x = tableX;
+      row.forEach((cell, idx) => {
+        const lines = pdf.splitTextToSize(cell, col[idx] - 5);
+        drawPdfText(pdf, lines, x + 3, y + 6, {
+          size: idx === 3 ? 6.2 : 6.7,
+          style: idx === 1 || idx === 4 ? "bold" : "normal",
+          color: idx === 4 ? "#059669" : idx === 1 ? "#091A36" : "#64748B"
+        });
+        x += col[idx];
+      });
+      y += rowHeight;
+    });
+
+    pdf.setFillColor(248, 250, 252);
+    pdf.rect(tableX, y, contentWidth - 16, 10, "F");
+    drawPdfText(pdf, "Total Duration", tableX + 76, y + 6.7, { align: "right", size: 6, style: "bold", color: "#64748B" });
+    drawPdfText(pdf, "20 Hours", tableX + 90, y + 6.7, { size: 8, style: "bold" });
+
+    const signatureQr = await createPdfQr(
+      qrCodeModule,
+      `Digitally signed by Astrid, Program Director, Lensetek International, LLC. Certificate: ${record.certificateNo}`,
+      180
+    );
+    drawPdfText(pdf, "This transcript is electronically issued by Lensetek International, LLC.", margin + 8, 194, { size: 6.5, color: "#64748B" });
+    drawPdfText(pdf, "Verify authenticity using the verification QR code on the certificate.", margin + 8, 201, { size: 6.5, color: "#94A3B8" });
+    drawPdfText(pdf, "Program Director", pageWidth - margin - 42, 184, { align: "center", size: 6, style: "bold", color: "#94A3B8" });
+    pdf.addImage(signatureQr, "PNG", pageWidth - margin - 58, 188, 16, 16);
+    drawPdfText(pdf, "Astrid", pageWidth - margin - 38, 197, { font: "times", style: "bold", size: 11 });
+  };
+
+  const getCertificatePdfFileName = (record) => {
+    const safeName = (record.holderName || "participant")
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase();
+
+    return `lensetek-certificate-${safeName}-${record.certificateNo}.pdf`;
+  };
+
+  const buildCertificatePdf = async (record) => {
+    const [{ jsPDF }, qrCodeModule] = await Promise.all([
+      import("jspdf"),
+      import("qrcode")
+    ]);
+    const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+    await drawCertificatePdfPage(pdf, record, qrCodeModule);
+    pdf.addPage("a4", "landscape");
+    await drawTranscriptPdfPage(pdf, record, qrCodeModule);
+
+    return pdf;
+  };
+
+  const handleDownloadCertificatePdf = async () => {
+    if (!certificateRecord || certificatePdfLoading || linkedInLoading) return;
+
+    setCertificatePdfLoading(true);
+    try {
+      const pdf = await buildCertificatePdf(certificateRecord);
+      pdf.save(getCertificatePdfFileName(certificateRecord));
+    } catch (error) {
+      console.error("Certificate PDF export error:", error);
+      const detail = error?.message ? `\n\nDetail: ${error.message}` : "";
+      window.alert((lang === "EN" ? "PDF could not be prepared. Please try again." : "PDF belum bisa disiapkan. Silakan coba lagi.") + detail);
+    } finally {
+      setCertificatePdfLoading(false);
+    }
+  };
+
+  const handleAddCertificateToLinkedIn = async () => {
+    if (!certificateRecord || certificatePdfLoading || linkedInLoading) return;
+
+    const linkedInWindow = window.open("", "_blank");
+    setLinkedInLoading(true);
+
+    try {
+      const pdf = await buildCertificatePdf(certificateRecord);
+      pdf.save(getCertificatePdfFileName(certificateRecord));
+
+      if (linkedInWindow) {
+        linkedInWindow.location.href = getLinkedInShareUrl(certificateRecord);
+      } else {
+        window.open(getLinkedInShareUrl(certificateRecord), "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      if (linkedInWindow) linkedInWindow.close();
+      console.error("LinkedIn certificate flow error:", error);
+      const detail = error?.message ? `\n\nDetail: ${error.message}` : "";
+      window.alert((lang === "EN" ? "LinkedIn flow could not be prepared. Please try again." : "Alur LinkedIn belum bisa disiapkan. Silakan coba lagi.") + detail);
+    } finally {
+      setLinkedInLoading(false);
+    }
   };
 
   const getDefaultBiodata = (currentUser) => ({
@@ -3484,7 +3751,7 @@ export default function LensetekAgenticAiLandingPage() {
                     <>
                       <div className="print-container space-y-8">
                         {/* Page 1: Certificate */}
-                        <div className="print-page print-cert-wrapper mx-auto max-w-6xl overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-2xl">
+                        <div ref={certificatePageRef} className="print-page print-cert-wrapper mx-auto max-w-6xl overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-2xl">
                           <div className="relative aspect-[1536/1080] w-full">
                             <img
                               src="/cert-template.png"
@@ -3545,7 +3812,7 @@ export default function LensetekAgenticAiLandingPage() {
                         </div>
 
                         {/* Page 2: Transcript with Participant Name, Validity, and Astrid Signature block */}
-                        <div className="print-page print-transcript-wrapper mx-auto max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm font-sans">
+                        <div ref={transcriptPageRef} className="print-page print-transcript-wrapper mx-auto max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm font-sans">
                           <div className="flex flex-col gap-2 border-b border-slate-100 pb-4 md:flex-row md:items-end md:justify-between">
                             <div>
                               <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-cyan-700">Official Transcript</p>
@@ -3731,18 +3998,23 @@ export default function LensetekAgenticAiLandingPage() {
                         </a>
                         <a
                           href={getLinkedInShareUrl(certificateRecord)}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            handleAddCertificateToLinkedIn();
+                          }}
                           className="inline-flex items-center gap-2 rounded-xl bg-[#0a66c2] text-white px-6 py-3 text-xs font-bold shadow-md hover:bg-[#004182] transition-all hover:scale-[1.01]"
+                          aria-disabled={linkedInLoading || certificatePdfLoading}
                         >
                           <LinkedInIcon className="h-4 w-4 shrink-0" />
-                          {currentT.shareLinkedIn}
+                          {linkedInLoading ? currentT.linkedInPreparing : currentT.shareLinkedIn}
                         </a>
                         <button
-                          onClick={() => window.print()}
-                          className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-6 py-3 text-xs font-bold text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer hover:scale-[1.01]"
+                          onClick={handleDownloadCertificatePdf}
+                          disabled={certificatePdfLoading || linkedInLoading}
+                          className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-6 py-3 text-xs font-bold text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer hover:scale-[1.01] disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
                         >
-                          {currentT.certPrint}
+                          <Download className="h-4 w-4" />
+                          {certificatePdfLoading ? currentT.certDownloadingPdf : currentT.certDownloadPdf}
                         </button>
                       </div>
                     </>
