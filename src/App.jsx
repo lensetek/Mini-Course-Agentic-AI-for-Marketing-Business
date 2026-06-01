@@ -37,6 +37,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, googleProvider, db } from "./firebase";
 
 const githubUrl = "https://github.com/lensetek/Mini-Course-Agentic-AI-for-Marketing-Business";
+const agentApiUrl = import.meta.env.VITE_AGENT_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api/agent/run" : "/api/agent/run");
 
 const stripLogPrefix = (log) => log.replace(/^.*?\]:\s*/, "");
 
@@ -2123,7 +2124,7 @@ export default function LensetekAgenticAiLandingPage() {
         // Trigger real secure API call to our backend OpenAI Agent
         setSimulationLogs(prev => [...prev, "[Server]: Connecting to secure OpenAI Agent backend..."]);
         try {
-          const response = await fetch("http://localhost:3001/api/agent/run", {
+          const response = await fetch(agentApiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -2211,7 +2212,7 @@ export default function LensetekAgenticAiLandingPage() {
     let finalOutput = "";
 
     try {
-      const response = await fetch("http://localhost:3001/api/agent/run", {
+      const response = await fetch(agentApiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

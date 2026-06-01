@@ -101,6 +101,7 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_firebase_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 VITE_CREDENTIAL_URL=http://localhost:5173
+VITE_AGENT_API_URL=http://localhost:3001/api/agent/run
 
 OPENAI_API=your_openai_api_key
 OPENAI_MODEL=gpt-4.1-nano
@@ -112,6 +113,7 @@ Security notes:
 - Variables with the `VITE_` prefix are bundled into the frontend by Vite. Use them only for public client configuration such as Firebase web config.
 - Never store the OpenAI API key in a `VITE_` variable.
 - The OpenAI key must stay on the backend through `OPENAI_API`, where it is used by `server.js`.
+- `VITE_AGENT_API_URL` is safe to expose because it is only the public backend endpoint URL, not a secret.
 - `.env.local`, `.env`, and other env files are ignored by `.gitignore`.
 - Invitation codes should be stored in Firestore, not in frontend environment variables.
 
@@ -186,6 +188,18 @@ Runs ESLint.
 The frontend can be deployed to Firebase Hosting, Vercel, Netlify, or another static hosting platform that supports Vite. The `server.js` backend should be deployed as a separate Node.js service if the AI Mentor sandbox needs to be available in production.
 
 Make sure secrets such as `OPENAI_API` are stored only in the backend environment, never in the frontend hosting configuration.
+
+For production, if the frontend and `server.js` are deployed as the same service, use the same-origin endpoint:
+
+```env
+VITE_AGENT_API_URL=/api/agent/run
+```
+
+If the backend is deployed as a separate service, set `VITE_AGENT_API_URL` to the deployed backend endpoint, for example:
+
+```env
+VITE_AGENT_API_URL=https://your-backend.example.com/api/agent/run
+```
 
 ## License
 

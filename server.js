@@ -19,6 +19,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4.1-nano';
+const distDir = path.resolve(__dirname, 'dist');
 
 app.post('/api/agent/run', async (req, res) => {
   const { message, agentName, instructions } = req.body;
@@ -52,6 +53,16 @@ app.post('/api/agent/run', async (req, res) => {
       error: error.message || 'Error occurred during agent execution.' 
     });
   }
+});
+
+app.use(express.static(distDir));
+
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api/')) {
+    return next();
+  }
+
+  res.sendFile(path.join(distDir, 'index.html'));
 });
 
 app.listen(PORT, () => {
