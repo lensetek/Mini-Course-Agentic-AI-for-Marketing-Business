@@ -28,7 +28,9 @@ import {
   Send,
   Globe,
   ListChecks,
-  Network
+  Network,
+  User,
+  TrendingUp
 } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
@@ -201,6 +203,18 @@ const GithubIcon = (props) => (
   </svg>
 );
 
+const ChatGPTIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.073zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.8956zm16.0993 3.8558L12.5969 8.3829v-2.3324a.0757.0757 0 0 1 .0332-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66l-.1467-.0853-4.7782-2.7581a.7712.7712 0 0 0-.7806 0zm-8.835-3.3543-.1467-.0853 4.7782-2.7582a.7664.7664 0 0 0 .3879-.6765V3.805a.0804.0804 0 0 1 .0379-.052l4.8303 2.7866a4.504 4.504 0 0 1 2.129 4.8872l-.1419.0804zM12 14.5422l-4.571-2.637 4.571-2.637 4.571 2.637z" />
+  </svg>
+);
+
 // Translation Dictionary
 const t = {
   EN: {
@@ -265,41 +279,41 @@ const t = {
         id: 1,
         title: "Foundations of Agentic AI",
         hours: "3 Hours",
-        desc: "Understand the core differences between traditional chat LLMs and autonomous AI agents capable of planning and tools usage.",
+        desc: "Learn how to create custom AI assistants (Gemini Gems) and structure systematic thinking loops to automate business workflows without coding.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Total Duration: 20 Hours (5 sessions × 4 hours)",
-          difficulty: "Difficulty: Beginner to Intermediate (No coding background required)",
-          description: "This curriculum is designed with a competency-based, skills-driven practical approach, where participants do not just learn theory but directly build and integrate autonomous AI agents to solve real business workflows.",
+          difficulty: "Difficulty: Beginner (No coding background required)",
+          description: "This curriculum is designed with a practical, skills-driven approach where you do not need coding knowledge. You will directly use Gemini Gems, Google Opal, and Antigravity to build and launch AI agents to solve real business tasks.",
           sessions: [
             {
-              title: "Session 1.1: Introduction to Generative AI vs Agentic AI (1.5 Hours)",
+              title: "Session 1.1: Chatbots vs. Autonomous Agents (1.5 Hours)",
               bullets: [
-                "Limitations of standard LLMs: Passive response generation based on static inputs.",
-                "Power of Agentic AI: Autonomously reasoning, planning, selecting tools, and executing decisions.",
-                "Anatomy of an AI Agent: Core LLM (Brain), Memory (Short & Long-term), Tools (APIs, Databases, Web Scrapers), and Planning."
+                "Limitations of regular AI chats: passive prompting and manual copy-pasting.",
+                "Custom Gemini Gems: setting up system instructions, custom roles, and specific business goals.",
+                "Anatomy of an Agent: core engine (Brain), memory (Context retention), and visual workspace tools."
               ]
             },
             {
-              title: "Session 1.2: Intended Optimization & Agent Logic Loops (1.5 Hours)",
+              title: "Session 1.2: Chain-of-Thought (CoT) Prompting (1.5 Hours)",
               bullets: [
-                "Deconstructing complex goals: Utilizing Chain-of-Thought (CoT) to map logical system processes transparently.",
-                "The ReAct (Reason + Act) Framework: Structuring systematic thought, action, and observation iteration loops.",
-                "Case Study: Upgrading manual market research into high-speed autonomous SWOT and SEO intelligence gathering workflows."
+                "Deconstructing business processes: mapping out step-by-step reasoning paths.",
+                "ReAct reasoning loops: guiding an AI agent to think first, call external search tools, and observe outcomes.",
+                "Real Case: Designing a prompt workflow for high-speed SEO research and competitive audits."
               ]
             }
           ],
           quiz: {
-            question: "According to the anatomy of an AI Agent, which core component serves as the 'Brain' to execute the ReAct reasoning loops?",
+            question: "Which Gemini feature allows you to build custom, role-specific AI assistants with pre-defined system instructions?",
             options: [
-              "Memory (Short-term & Long-term context storage)",
-              "Tools (Web search, APIs, and Database integrations)",
-              "Core LLM (Large Language Model acting as the Brain)",
-              "Planning (Chain-of-Thought step scheduler)",
-              "External Vector Databases (Embeddings query storage)"
+              "Google Workspace Docs",
+              "Gemini Gems (Custom role-specific assistants)",
+              "Google Custom Search",
+              "Chrome DevTools",
+              "Local SQL Database"
             ],
-            answerIdx: 2
+            answerIdx: 1
           }
         }
       },
@@ -307,39 +321,39 @@ const t = {
         id: 2,
         title: "Workflows & Multi-Agent Systems",
         hours: "4 Hours",
-        desc: "Design detailed instructions, persona boundaries, guardrails, and systematic collaborations between multiple specialized agents.",
+        desc: "Build a collaborative team of specialized Gems and design routing checkpoints to enforce quality controls over business output.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Total Duration: 20 Hours (5 sessions × 4 hours)",
-          difficulty: "Difficulty: Beginner to Intermediate (No coding background required)",
-          description: "Learn how to architect collaborative workspaces where multiple AI agents work in sync, passing tasks and data securely to compile complex operations.",
+          difficulty: "Difficulty: Beginner (No coding background required)",
+          description: "Learn how to connect multiple Gemini Gems in a collaborative pipeline, letting specialized personas check each other's work and pass drafts smoothly.",
           sessions: [
             {
-              title: "Session 2.1: Designing Agent Personas & Instructions (2 Hours)",
+              title: "Session 2.1: Designing Specialized Gems (2 Hours)",
               bullets: [
-                "Defining rigid system instructions to craft distinct, high-fidelity agent personalities.",
-                "Configuring guardrails: setting exact limits to stop infinite loop cycles and output degradation.",
-                "Formatting output guidelines to ensure agents deliver clean structured datasets."
+                "Drafting strict role guidelines for an SEO Specialist, a Copywriter, and a QA Editor.",
+                "Setting limits and guidelines to prevent repetitive outputs or straying off-brand.",
+                "Structuring output schemas: forcing Gems to deliver text formatted neatly for your worksheets."
               ]
             },
             {
-              title: "Session 2.2: Guardrails & Supervisor Routing (2 Hours)",
+              title: "Session 2.2: Connecting Collaborative Workflows (2 Hours)",
               bullets: [
-                "Orchestrating agent networks: building supervisor agents that review work and route tasks.",
-                "Stateful collaborations: passing task contexts securely across worker agents (Writer, QA, Editor).",
-                "Human-in-the-loop: implementing fallback checkpoints to request human approvals before final actions."
+                "Supervisor Reviews: creating reviewer Gems that audit worker outputs and direct the next tasks.",
+                "Context continuity: passing draft details smoothly from writer Gems to editor Gems.",
+                "Human-in-the-loop: setting manual approval checkpoints before final publishing operations."
               ]
             }
           ],
           quiz: {
-            question: "In a Multi-Agent architecture, what is the key responsibility of a 'Supervisor' or 'Orchestrator' agent?",
+            question: "In a collaborative Multi-Agent Gems system, what is the primary role of a 'Human-in-the-loop' checkpoint?",
             options: [
-              "Storing database passwords securely.",
-              "Evaluating the outputs of workers and routing the task to the next logical agent.",
-              "Translating program scripts directly into raw binary.",
-              "Counting the exact word limits of articles.",
-              "Acting as an external firewall configuration controller."
+              "To let the AI publish drafts to social media instantly.",
+              "To require manual review and approval from a human before the AI executes high-risk steps.",
+              "To translate visual prompts into binary code.",
+              "To count the exact words written.",
+              "To reset the local server configurations."
             ],
             answerIdx: 1
           }
@@ -349,39 +363,39 @@ const t = {
         id: 3,
         title: "Marketing Automation",
         hours: "5 Hours",
-        desc: "Build content writing engines, trend research pipelines, automated SEO, competitor tracking, and live market intelligence reports.",
+        desc: "Leverage visual agent orchestration with Antigravity to run competitor SWOT analysis, track trends, and compose SEO-optimized blogs.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Total Duration: 20 Hours (5 sessions × 4 hours)",
-          difficulty: "Difficulty: Beginner to Intermediate (No coding background required)",
-          description: "Configure fully automated marketing workflows that dynamically query search trends, scrape competitors, and compose personalized content at scale.",
+          difficulty: "Difficulty: Beginner (No coding background required)",
+          description: "Configure automated marketing machines that dynamically scout search trends, extract competitive highlights, and draft ready-to-publish content.",
           sessions: [
             {
-              title: "Session 3.1: Automated SEO & Keyword Harvesters (2.5 Hours)",
+              title: "Session 3.1: Automated SEO Writing Workflows (2.5 Hours)",
               bullets: [
-                "Web Scraping: building web-enabled agents that crawl SERP results for live search trends.",
-                "SEO Outline Automation: generating high-conversions outlines based on keyword densities.",
-                "Automated Blog Generation: writing articles that strictly align to targeted search results."
+                "Real-time search tools: instructing agents to crawl search results for high-density keywords.",
+                "Dynamic outline builders: structuring rich outlines based on target competitor strategies.",
+                "Blog Automation: guiding agents to compile draft blogs adhering strictly to modern SEO standards."
               ]
             },
             {
-              title: "Session 3.2: Automated Competitor SWOT Engines (2.5 Hours)",
+              title: "Session 3.2: Competitor SWOT Automation (2.5 Hours)",
               bullets: [
-                "Competitor Scraping: extracting competitor features and landing page copy autonomously.",
-                "SWOT Compiler: synthesizing competitor weaknesses and opportunities into structured analyses.",
-                "Automated Reporting: publishing summaries directly to CMS channels or Slack rooms."
+                "Competitive analysis: instructing agents to scan rival product reviews and pricing pages otonomously.",
+                "SWOT Matrix Compiler: synthesizing competitor strengths and weaknesses into visual reports.",
+                "Direct reporting: routing completed SWOT briefings to email channels or Slack hubs."
               ]
             }
           ],
           quiz: {
-            question: "Which of the following represents a practical marketing use case for an autonomous AI Agent?",
+            question: "Which of the following represents a practical marketing use case for automated trend and competitor SWOT research?",
             options: [
-              "Manually copying and pasting text into Word docs.",
-              "Setting up static email templates.",
-              "Continuous keyword research, competitor SEO tracking, and auto SWOT generation.",
-              "Writing simple one-time prompts.",
-              "Printing static PDF flyers."
+              "Copy-pasting text manually between different browser tabs.",
+              "Setting up simple static text files.",
+              "Continuously scanning market changes, tracking competitor SEO, and compiling SWOT briefs otonomously.",
+              "Writing single one-time prompts in standard chats.",
+              "Printing physical paper flyers."
             ],
             answerIdx: 2
           }
@@ -389,41 +403,41 @@ const t = {
       },
       {
         id: 4,
-        title: "Business & SMB Operations",
+        title: "Business Operations with Google Opal",
         hours: "5 Hours",
-        desc: "Deploy AI agents for autonomous customer support, sales lead qualification, business analytics, and stock/promotional recommendations.",
+        desc: "Prototype and design visual AI mini-apps using drag-and-drop visual workflows in Google Opal to automate customer outreach and score sales leads.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Total Duration: 20 Hours (5 sessions × 4 hours)",
-          difficulty: "Difficulty: Beginner to Intermediate (No coding background required)",
-          description: "Leverage AI agents to qualify incoming sales leads, respond autonomously to support tickets, and securely perform database analyses.",
+          difficulty: "Difficulty: Beginner (No coding background required)",
+          description: "Build visual AI workflows on Google Opal's experimental Labs canvas, assembling custom drag-and-drop mini-apps to route customer outreach otonomously.",
           sessions: [
             {
-              title: "Session 4.1: Autonomous Lead Scoring & Support Routing (2.5 Hours)",
+              title: "Session 4.1: Drag-and-Drop AI Mini-Apps in Google Opal (2.5 Hours)",
               bullets: [
-                "Support Agents: analyzing user ticket sentiments and auto-generating tailored replies.",
-                "Dynamic Escalation: routing highly complex complaints to human administrators instantly.",
-                "Lead Qualification: scoring leads based on company size, budget, and needs automatically."
+                "Visual workflow canvas: designing inputs, AI processing steps, and outputs without code.",
+                "Prototyping custom tools: building travel planners, custom generators, or writing aids in Google Opal.",
+                "Sharing workflows: compiling visual AI tools and instantly sharing them with your team via link."
               ]
             },
             {
-              title: "Session 4.2: Natural Language CSV & Sales Analytics (2.5 Hours)",
+              title: "Session 4.2: Sales Outreach & Lead Scoring (2.5 Hours)",
               bullets: [
-                "CSV Querying: asking natural language questions to analyze complex spreadsheets.",
-                "Sales Forecasting: building agents that inspect past sales to flag peak demand trends.",
-                "Inventory Intelligence: auto-composing stock order lists to prevent ritel shortages."
+                "Lead qualification: creating Opal mini-apps to score incoming client inquires otonomously.",
+                "Outreach automation: drafting highly tailored email follow-ups based on lead score data.",
+                "SMB operations: scaling repetitive administrative and client management tasks visually."
               ]
             }
           ],
           quiz: {
-            question: "How can an agent securely assist in sales qualification without exposing private database credentials?",
+            question: "What is the primary operational advantage of using Google Opal in SMB operations?",
             options: [
-              "By letting users write direct raw SQL injections.",
-              "By acting as a secure server-side API proxy that processes inputs and applies predefined guardrails.",
-              "By publishing the database keys to client-side cookies.",
-              "By turning off all user authorization rules.",
-              "By sharing passwords via plain text email."
+              "Writing backend database SQL injection codes.",
+              "Designing and sharing visual, no-code AI mini-apps using drag-and-drop workflows.",
+              "Setting up physical servers.",
+              "Disabling security firewalls.",
+              "Running manual server-side scripts."
             ],
             answerIdx: 1
           }
@@ -431,41 +445,41 @@ const t = {
       },
       {
         id: 5,
-        title: "No-Code Deployment",
+        title: "Low-Code Deployments & Launch",
         hours: "3 Hours",
-        desc: "Bring workflows to life using no-code/low-code platforms, then thoroughly evaluate performance, operating costs, and overall readiness.",
+        desc: "Integrate simple automation pipelines, monitor usage limits, and execute security checklists to launch your AI systems to production safely.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Total Duration: 20 Hours (5 sessions × 4 hours)",
-          difficulty: "Difficulty: Beginner to Intermediate (No coding background required)",
-          description: "Transition your tested local agents into production environments using low-code pipelines, auditing API overhead and token expenses.",
+          difficulty: "Difficulty: Beginner (No coding background required)",
+          description: "Connect your tested Gems and Opal visual apps into visual low-code pipelines, reviewing costs and launching safe administrative tools.",
           sessions: [
             {
-              title: "Session 5.1: Low-code Automation Tools (Make/n8n/Flowise) (1.5 Hours)",
+              title: "Session 5.1: Low-code Connections & Triggers (1.5 Hours)",
               bullets: [
-                "Pipeline Connections: connecting visual node platforms directly to your backend API endpoints.",
-                "Event triggers: starting agent actions based on email events or spreadsheet updates.",
-                "Error Handlers: setting up automated retry loops to manage API connection dropouts."
+                "Trigger events: running visual workflows automatically based on spreadsheet updates or new emails.",
+                "Visual connections: linking data between your email inbox, visual apps, and spreadsheets.",
+                "Visual error handlings: designing simple visual retry steps if visual nodes timeout."
               ]
             },
             {
-              title: "Session 5.2: Latency, Cost Controls, & Launch Checklists (1.5 Hours)",
+              title: "Session 5.2: Cost Monitoring & Pre-Launch Checklists (1.5 Hours)",
               bullets: [
-                "Token Optimization: pruning system prompts and using context caches to reduce API fees.",
-                "User Acceptance Testing (UAT): launching beta tests to confirm accurate agent behaviors.",
-                "Launch Checklists: validating cloud hosting readiness, firewall configurations, and API keys."
+                "Cost control: pruning prompt steps to save on API overhead and query limits.",
+                "User acceptance tests: running team dry-runs to ensure accurate agent outcomes.",
+                "Security checklists: protecting visual workspace credentials and managing login access."
               ]
             }
           ],
           quiz: {
-            question: "Why is evaluating token usage and latency critical before launching an Agentic AI workflow to production?",
+            question: "Why should a business monitor daily query quotas and prompt costs prior to launch?",
             options: [
-              "To control running API costs and ensure a snappy, reliable user experience.",
-              "Because high latency improves search indexing.",
-              "Because it is required to purchase hosting servers.",
-              "To disable security firewalls.",
-              "To increase browser tab limits."
+              "To control running operational costs and guarantee a snappy, reliable user experience.",
+              "Because high prompt latency improves SEO search indexing.",
+              "Because visual webhooks require separate monthly hardware charges.",
+              "To disable local workspace firewalls.",
+              "To bypass Google Workspace login screens."
             ],
             answerIdx: 0
           }
@@ -535,81 +549,81 @@ const t = {
         id: 1,
         title: "Fondasi Agentic AI & Pergeseran Paradigma",
         hours: "3 Jam",
-        desc: "Memahami perbedaan mendasar antara AI generatif biasa dengan Agen AI yang otonom beserta anatomi internalnya.",
+        desc: "Memahami perbedaan mendasar antara AI biasa dengan asisten AI kustom (Gemini Gems) serta menyusun kerangka berpikir otonom langkah-demi-langkah tanpa coding.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Durasi Total: 20 Jam (5 sesi × 4 jam)",
-          difficulty: "Tingkat Kesulitan: Pemula hingga Menengah (Tidak wajib latar belakang coding)",
-          description: "Kurikulum ini dirancang dengan pendekatan praktis berbasis kompetensi (skills-driven), di mana peserta tidak hanya belajar teori, tetapi langsung membangun dan mengintegrasikan agen AI otonom untuk menyelesaikan workflow riil di dunia pemasaran dan bisnis.",
+          difficulty: "Tingkat Kesulitan: Pemula (Tidak wajib latar belakang coding)",
+          description: "Kurikulum ini dirancang dengan pendekatan praktis no-code yang ramah pemula. Anda akan langsung belajar menggunakan Gemini Gems, Google Opal, dan Antigravity untuk membangun asisten AI guna menyelesaikan tugas-tugas bisnis nyata.",
           sessions: [
             {
-              title: "Sesi 1.1: Pengantar Generative AI vs Agentic AI (1.5 Jam)",
+              title: "Sesi 1.1: Chatbot Biasa vs Asisten AI Kustom (1.5 Jam)",
               bullets: [
-                "Keterbatasan LLM standar: Hanya merespons teks secara pasif berdasarkan prompt statis.",
-                "Kekuatan Agentic AI: Kemampuan untuk berpikir (reason), merencanakan (plan), menggunakan alat bantu (tools), dan mengambil keputusan mandiri.",
-                "Anatomi Agen AI: Terdiri atas empat pilar utama: Core LLM (Brain), Memory (Short-term & Long-term), Tools (Web search, API, Database), dan Planning."
+                "Keterbatasan chat AI standar: mengetik prompt berulang dan menyalin teks manual.",
+                "Gemini Gems Kustom: menyusun instruksi sistem dasar, kepribadian peran, dan target tujuan bisnis.",
+                "Anatomi Asisten AI: mesin utama (Brain), penyimpanan riwayat (Context), dan modul interaksi."
               ]
             },
             {
-              title: "Sesi 1.2: Intended Optimization & Logika Berpikir Agen (1.5 Jam)",
+              title: "Sesi 1.2: Kerangka Berpikir Terstruktur / Chain-of-Thought (1.5 Jam)",
               bullets: [
-                "Memecah tugas kompleks: Mengenal konsep Chain-of-Thought (CoT) untuk visualisasi logika penalaran internal.",
-                "ReAct (Reason + Act) Framework: Siklus otonom terintegrasi yang menggabungkan Thought, Action, dan Observation dalam putaran umpan balik berulang.",
-                "Studi Kasus: Bagaimana Agen AI mengubah operasional riset pasar tradisional yang lambat menjadi workflow riset, SWOT kompetitor, dan pelaporan otomatis secara otonom."
+                "Memecah proses operasional bisnis: memetakan langkah-langkah logika secara runtut.",
+                "Logika ReAct: membimbing asisten AI untuk memikirkan solusi, mencari info eksternal, dan merangkum hasil secara terstruktur.",
+                "Studi Kasus: Membuat alur kerja otonom untuk riset SEO cepat dan analisis SWOT instan."
               ]
             }
           ],
           quiz: {
-            question: "Berdasarkan anatomi Agen AI, pilar manakah yang bertindak sebagai 'Brain' (Mesin Penalaran) untuk mengeksekusi kerangka berpikir ReAct?",
+            question: "Fitur Gemini manakah yang memungkinkan Anda membuat asisten AI kustom berdasarkan peran tertentu dengan instruksi bawaan yang telah ditetapkan?",
             options: [
-              "Memory (Penyimpan konteks jangka pendek & panjang)",
-              "Tools (Integrasi Web search, API, dan Database)",
-              "Core LLM (Large Language Model sebagai Brain)",
-              "Planning (Chain-of-Thought untuk perincian tugas)",
-              "External Vectors Storage (Database embeddings eksternal)"
+              "Google Workspace Docs",
+              "Gemini Gems (Asisten kustom peran khusus)",
+              "Google Custom Search API",
+              "Chrome DevTools",
+              "Database SQL Lokal"
             ],
-            answerIdx: 2
+            answerIdx: 1
           }
         }
       },
       {
         id: 2,
-        title: "Workflow & Multi-Agent",
+        title: "Workflow & Kolaborasi Multi-Agent",
         hours: "4 Jam",
-        desc: "Rancang instruksi, persona, guardrails, serta kolaborasi antar-agen untuk proses bisnis yang lebih sistematis.",
+        desc: "Rancang kolaborasi tim asisten AI Gems dan bangun pos pemeriksaan kualitas kerja (guardrails) untuk hasil bisnis terbaik.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Durasi Total: 20 Jam (5 sesi × 4 jam)",
-          difficulty: "Tingkat Kesulitan: Pemula hingga Menengah (Tidak wajib latar belakang coding)",
-          description: "Pelajari cara merancang ruang kerja kolaboratif di mana beberapa agen AI bekerja secara harmonis, memindahkan data secara terstruktur untuk menyelesaikan operasi bisnis yang kompleks.",
+          difficulty: "Tingkat Kesulitan: Pemula (Tidak wajib latar belakang coding)",
+          description: "Pelajari cara menghubungkan beberapa asisten Gemini Gems menjadi satu tim kerja yang padu, di mana masing-masing asisten saling mengoreksi draf dan memindahkan hasil tulisan secara berkesinambungan.",
           sessions: [
             {
-              title: "Sesi 2.1: Merancang Persona Agen & Instruksi Sistem (2 Jam)",
+              title: "Sesi 2.1: Merancang Spesialisasi Peran Gems (2 Jam)",
               bullets: [
-                "Merancang persona agen spesifik: merancang system prompt yang rigid untuk memisahkan kepribadian Copywriter, Analis, dan Quality Control.",
-                "Membangun guardrails pengaman: membatasi rentang instruksi agar agen tidak terjebak dalam loop tanpa akhir.",
-                "Format Output Khusus: melatih agen memberikan struktur respon yang selalu kompatibel (JSON/Markdown)."
+                "Menyusun instruksi rigid untuk peran: Spesialis SEO, Copywriter Iklan, dan Editor Tata Bahasa.",
+                "Membangun batasan instruksi (guardrails) agar asisten Gems tetap fokus pada target dan anti-repetitif.",
+                "Format output terstruktur: mendesain agar Gems selalu mengembalikan data dalam tata letak tabel rapi."
               ]
             },
             {
-              title: "Sesi 2.2: Guardrails & Supervisor Routing (2 Jam)",
+              title: "Sesi 2.2: Kolaborasi Tim Gems & Reviewer (2 Jam)",
               bullets: [
-                "Orkestrasi multi-agen: membangun Agen Supervisor yang secara aktif mengulas kerja agen bawahan dan merutekan tugas.",
-                "Kolaborasi Stateful: mengirimkan context memori secara dinamis dari satu agen ke agen lainnya tanpa kehilangan riwayat.",
-                "Human-in-the-loop: mengintegrasikan pos persetujuan manusia sebelum agen AI mengeksekusi keputusan bernilai tinggi."
+                "Supervisor Gems: membangun Gems pengawas yang mengulas pekerjaan asisten lain dan merutekan tugas selanjutnya.",
+                "Keberlanjutan konteks: mengalirkan draf kasar secara mulus dari asisten Writer ke Editor.",
+                "Human-in-the-loop: menyisipkan pos persetujuan manusia sebelum draf akhir dipublikasikan secara komersial."
               ]
             }
           ],
           quiz: {
-            question: "Dalam arsitektur Multi-Agent, apa peran dari Agen 'Supervisor' atau 'Orchestrator'?",
+            question: "Dalam tim kolaborasi asisten Gems, apakah fungsi dari pos 'Human-in-the-loop'?",
             options: [
-              "Menyimpan password database dengan aman.",
-              "Mengevaluasi hasil kerja agen bawahan dan mengarahkan tugas ke langkah berikutnya secara cerdas.",
-              "Menerjemahkan kode program langsung menjadi biner.",
-              "Menghitung jumlah total kata yang ditulis.",
-              "Bertindak sebagai router firewall cadangan."
+              "Mengizinkan AI langsung memposting tulisan ke sosial media secara otomatis.",
+              "Mewajibkan tinjauan dan persetujuan manual dari pengguna manusia sebelum AI mengeksekusi langkah penting.",
+              "Menerjemahkan instruksi visual menjadi kode biner.",
+              "Menghitung jumlah total kata tulisan.",
+              "Merestart server lokal."
             ],
             answerIdx: 1
           }
@@ -617,41 +631,41 @@ const t = {
       },
       {
         id: 3,
-        title: "Marketing Automation",
+        title: "Otomatisasi Pemasaran (Marketing Automation)",
         hours: "5 Jam",
-        desc: "Bangun engine konten, riset tren, SEO, competitor tracking, dan laporan market intelligence otomatis.",
+        desc: "Gunakan asisten cerdas Antigravity untuk riset tren pasar otonom, analisis SWOT kompetitor, dan menulis draf konten SEO otomatis.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Durasi Total: 20 Jam (5 sesi × 4 jam)",
-          difficulty: "Tingkat Kesulitan: Pemula hingga Menengah (Tidak wajib latar belakang coding)",
-          description: "Konfigurasikan alur kerja pemasaran otomatis yang secara otonom meriset tren pencarian, merayap kompetitor, dan mempublikasikan konten yang terpersonalisasi.",
+          difficulty: "Tingkat Kesulitan: Pemula (Tidak wajib latar belakang coding)",
+          description: "Konfigurasikan sistem pemasaran terotomatisasi yang secara mandiri memantau tren Google, membaca kompetitor, dan menyusun draf konten siap pakai.",
           sessions: [
             {
-              title: "Sesi 3.1: Otomatisasi SEO & Keyword Harvesters (2.5 Jam)",
+              title: "Sesi 3.1: Alur Kerja Konten SEO Otomatis (2.5 Jam)",
               bullets: [
-                "Perayapan Web otonom: membangun agen pembaca web yang mengumpulkan data tren langsung dari mesin pencari Google.",
-                "Pembuatan Konten SEO: merumuskan outline artikel bernilai tinggi berdasarkan kepadatan kata kunci kompetitor teratas.",
-                "Pembuatan Blog Otomatis: menginstruksikan agen menulis artikel lengkap yang secara ketat selaras dengan pedoman SEO terbaru."
+                "Alat pencari real-time: menginstruksikan asisten memindai volume kata kunci dan data tren pasar terbaru.",
+                "Perancang outline dinamis: menyusun struktur artikel kaya informasi berdasarkan konten pesaing teratas.",
+                "Pembuatan blog instan: membimbing asisten merakit draf artikel komprehensif yang mematuhi standar SEO modern."
               ]
             },
             {
-              title: "Sesi 3.2: Engine Laporan SWOT Kompetitor Otomatis (2.5 Jam)",
+              title: "Sesi 3.2: Otomatisasi Analisis SWOT Pesaing (2.5 Jam)",
               bullets: [
-                "Rayapan SWOT Kompetitor: mengumpulkan data fitur, kelebihan, dan skema harga kompetitor secara mandiri.",
-                "Sintesis Data Cepat: menyusun matriks analisis SWOT secara komprehensif ke dalam format terstruktur.",
-                "Distribusi Otomatis: mengirimkan file markdown hasil SWOT ke saluran operasional Slack atau kotak surat email."
+                "Cek kompetitor: menginstruksikan asisten memetakan kelebihan dan harga produk pesaing otonom.",
+                "SWOT Matrix Compiler: merangkum temuan menjadi tabel SWOT (Kekuatan, Kelemahan, Peluang, Ancaman).",
+                "Laporan otomatis: menyalurkan hasil ringkasan briefing analisis SWOT langsung ke grup Slack atau kotak email."
               ]
             }
           ],
           quiz: {
-            question: "Manakah di bawah ini yang merupakan studi kasus marketing nyata dari pemanfaatan Agen AI otonom?",
+            question: "Manakah di bawah ini yang merupakan contoh pemanfaatan asisten AI otonom dalam otomatisasi pemasaran?",
             options: [
-              "Menyalin teks manual ke dokumen Word secara berulang.",
-              "Memasang template email statis sekali pakai.",
-              "Riset tren kompetitor berkelanjutan, analisis SEO pasar secara otonom, dan pembuatan laporan SWOT otomatis.",
-              "Menulis perintah prompt biasa di dashboard chat.",
-              "Mencetak selebaran promosi PDF statis."
+              "Menyalin teks manual secara berulang antar-tab browser.",
+              "Menulis draf statis satu kali.",
+              "Pemantauan tren pasar secara kontinu, pelacakan SEO pesaing otonom, dan pembuatan ringkasan laporan SWOT otomatis.",
+              "Membuat prompt biasa dalam chat sekali pakai.",
+              "Mencetak selebaran promosi kertas fisik."
             ],
             answerIdx: 2
           }
@@ -659,41 +673,41 @@ const t = {
       },
       {
         id: 4,
-        title: "Operasional Bisnis & UMKM",
+        title: "Operasional Bisnis dengan Google Opal",
         hours: "5 Jam",
-        desc: "Gunakan agen AI untuk customer support, lead qualification, analisis penjualan, dan rekomendasi stok/promosi.",
+        desc: "Rancang visual workflow otonom dan prototype aplikasi mini AI untuk kualifikasi prospek penjualan serta otomatisasi email operasional UMKM menggunakan drag-and-drop di Google Opal.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Durasi Total: 20 Jam (5 sesi × 4 jam)",
-          difficulty: "Tingkat Kesulitan: Pemula hingga Menengah (Tidak wajib latar belakang coding)",
-          description: "Berdayakan Agen AI otonom untuk memicu respon bantuan pelanggan, menyaring prospek penjualan tinggi, dan menganalisis database secara aman.",
+          difficulty: "Tingkat Kesulitan: Pemula (Tidak wajib latar belakang coding)",
+          description: "Bangun visual workflow otonom di kanvas Labs Google Opal, merakit aplikasi mini drag-and-drop kustom untuk kualifikasi prospek secara mandiri.",
           sessions: [
             {
-              title: "Sesi 4.1: Kualifikasi Prospek & Bantuan Pelanggan Otonom (2.5 Jam)",
+              title: "Sesi 4.1: Membuat Aplikasi Mini AI Drag-and-Drop di Google Opal (2.5 Jam)",
               bullets: [
-                "Customer Support Agent: menganalisis sentimen tiket pelanggan secara instan dan memicu draft balasan personal.",
-                "Eskalasi Dinamis: merutekan keluhan kompleks ke admin manusia secara cerdas ketika mendeteksi tingkat urgensi tinggi.",
-                "Lead Qualification: mengukur skor calon konsumen secara otonom berdasarkan profil ukuran bisnis dan industri."
+                "Kanvas alur visual: mendesain kotak input pengguna, proses berpikir AI, dan output akhir tanpa menulis kode.",
+                "Membuat prototype asisten kustom: merakit alat rencana perjalanan, perangkum data, atau alat menulis otomatis di Google Opal.",
+                "Membagikan aplikasi mini: menghasilkan link akses instan untuk dibagikan ke tim kerja Anda."
               ]
             },
             {
-              title: "Sesi 4.2: natural language CSV & Analitik Penjualan (2.5 Jam)",
+              title: "Sesi 4.2: Kualifikasi Prospek & Email Otomatis (2.5 Jam)",
               bullets: [
-                "Analisis Spreadsheet otonom: menanyakan pertanyaan natural untuk menganalisis data penjualan CSV yang kompleks.",
-                "Prediksi Permintaan: membangun agen analitik penjualan yang mengidentifikasi tren permintaan musiman dari riwayat data.",
-                "Rekomendasi Stok: menginstruksikan agen menyusun rekomendasi stok ritel otomatis untuk menghindari kelangkaan."
+                "Penyaringan prospek otomatis: membuat alur kerja Opal untuk membaca dan memberikan skor potensi penjualan klien.",
+                "Otomatisasi pesan follow-up: merancang asisten pembuat draf email penawaran personal berdasarkan skor prospek.",
+                "Skalabilitas UMKM: mempercepat pekerjaan administratif rutin dan pengelolaan email pelanggan secara visual."
               ]
             }
           ],
           quiz: {
-            question: "Bagaimana Agen AI membantu kualifikasi prospek bisnis secara aman tanpa membocorkan kredensial database internal?",
+            question: "Apa fungsi utama dari Google Opal dalam membantu operasional bisnis UMKM?",
             options: [
-              "Dengan memberikan akses bebas menulis query SQL mentah.",
-              "Melalui jembatan API secure di sisi server yang menerapkan batas filter data masukan pelanggan.",
-              "Dengan membagikan API key langsung pada browser cookie.",
-              "Dengan menonaktifkan seluruh aturan keamanan validasi pengguna.",
-              "Dengan mengirim password via email teks biasa."
+              "Menulis query database SQL yang rumit.",
+              "Merancang dan membagikan aplikasi mini AI no-code melalui alur kerja visual drag-and-drop.",
+              "Mengatur penyimpanan kotak barang di gudang.",
+              "Menonaktifkan sistem keamanan firewall internet.",
+              "Menjalankan skrip pemrograman server."
             ],
             answerIdx: 1
           }
@@ -701,41 +715,41 @@ const t = {
       },
       {
         id: 5,
-        title: "No-Code Deployment",
+        title: "Orkestrasi Low-Code & Checklist Rilis",
         hours: "3 Jam",
-        desc: "Aktifkan workflow menggunakan platform no-code/low-code, lalu uji performa, biaya, dan kesiapan implementasinya.",
+        desc: "Hubungkan pipa otomatisasi visual sederhana, kelola kuota kueri harian, dan jalankan checklist keamanan rilis produksi.",
         materials: {
           institution: "Lensetek International, LLC. United States",
           course: "Mini Course: Agentic AI for Marketing & Business",
           duration: "Durasi Total: 20 Jam (5 sesi × 4 jam)",
-          difficulty: "Tingkat Kesulitan: Pemula hingga Menengah (Tidak wajib latar belakang coding)",
-          description: "Transisikan agen AI lokal yang telah teruji ke lingkungan produksi komersial menggunakan alur kerja low-code, serta audit latensi dan biaya token API.",
+          difficulty: "Tingkat Kesulitan: Pemula (Tidak wajib latar belakang coding)",
+          description: "Sambungkan asisten Gems dan aplikasi visual Opal Anda ke pipa integrasi visual low-code untuk menyederhanakan tugas rutin harian Anda secara aman.",
           sessions: [
             {
-              title: "Sesi 5.1: Low-code Orkestrasi (Make / n8n / Flowise) (1.5 Jam)",
+              title: "Sesi 5.1: Integrasi Koneksi & Pemicu Otomatis (1.5 Jam)",
               bullets: [
-                "Koneksi Pipeline Visual: menyambungkan alur visual node langsung ke endpoint API Agen backend Anda.",
-                "Pemicu Otomatis (Triggers): memulai alur kerja agen berdasarkan email masuk, chat masuk, atau baris spreadsheet baru.",
-                "Manajemen Error: menyusun skema putaran ulang (retry loops) otomatis ketika koneksi API mengalami gangguan jaringan."
+                "Pemicu alur kerja (Triggers): menjalankan otomatisasi ketika ada baris tabel baru di worksheet atau email masuk.",
+                "Penyambungan visual: mengalirkan data secara otomatis antar-folder email, dokumen kustom, dan tabel.",
+                "Penanganan error visual: mendesain langkah pengulangan (retry) otomatis sederhana jika ada koneksi terputus."
               ]
             },
             {
-              title: "Sesi 5.2: Latensi, Manajemen Biaya, & Checklist Rilis (1.5 Jam)",
+              title: "Sesi 5.2: Monitoring Kuota & Checklist Rilis (1.5 Jam)",
               bullets: [
-                "Optimasi Token: memotong system prompt berlebih dan menerapkan cache context untuk menghemat pengeluaran biaya API.",
-                "Uji Coba UAT (User Acceptance Testing): menguji performa sistem pada skenario operasional riil untuk memastikan keakuratan respon agen.",
-                "Checklist Kesiapan Rilis: memvalidasi firewall cloud hosting, enkripsi API keys, dan batas kuota server produksi."
+                "Audit biaya & token: merapikan prompt untuk memangkas batasan token dan batas kueri harian.",
+                "Uji coba tim (UAT): menjalankan simulasi draf buatan asisten bersama tim untuk memvalidasi ketepatan kerja.",
+                "Checklist keamanan: mengamankan kredensial pemicu visual dan mengatur hak akses akun tim."
               ]
             }
           ],
           quiz: {
-            question: "Mengapa penting melakukan audit token dan latensi sebelum merilis sistem agen AI ke tahap produksi?",
+            question: "Mengapa pemilik bisnis wajib memperkirakan batas kuota kueri dan biaya token sebelum meluncurkan otomatisasi asisten AI?",
             options: [
-              "Untuk mengontrol pengeluaran biaya API dan menjamin respon sistem yang cepat dan andal.",
-              "Karena latensi yang lama mempercepat pengindeksan web.",
-              "Karena hal tersebut diwajibkan oleh penyedia hosting cloud server.",
-              "Untuk menonaktifkan perlindungan antivirus komputer.",
-              "Untuk meningkatkan batas maksimal tab pada browser."
+              "Untuk mengontrol biaya operasional bulanan dan menjamin pengalaman pengguna yang andal dan cepat.",
+              "Karena latensi yang lama mempercepat optimasi pencarian Google.",
+              "Karena pemicu visual menuntut penyewaan hardware server fisik tambahan.",
+              "Untuk menonaktifkan firewall komputer lokal.",
+              "Untuk melewati layar verifikasi Google Workspace."
             ],
             answerIdx: 0
           }
@@ -749,101 +763,101 @@ const sessionExplanations = {
   EN: {
     1: [
       {
-        concept: "In this hands-on session, you will set up a local Node.js environment, install the official `@openai/agents` SDK via terminal (`npm install @openai/agents`), and configure your private `.env.local` to host secure API keys. You will write an Express-backed server file (`server.js`) that safely proxies requests to the model `gpt-4.1-nano`. Rather than calling simple completions, you will initialize a stateful `Agent` runner, testing how the agent autonomously schedules loops, logs actions in a terminal console, and resolves user tasks without client-side key leakage.",
-        architecture: "npm install @openai/agents ──> Write server.js API ──> Run Agent Runner Loop ──> Console Output",
+        concept: "Gemini Gems allow business users to design dedicated, custom role personas without coding. By defining a Gem's profile, system instructions, and target output style, you bypass generic chat limitations and build a reliable operational tool.",
+        architecture: "Generic ChatGPT ──> Customize Gemini Gem Profile ──> Direct System Instructions ──> Specialized AI Assistant",
         checklist: [
-          "Initialize a Node.js project and securely lock credentials in .env.local.",
-          "Write a secure Express POST endpoint to handle client-side agent prompt routing.",
-          "Inspect autonomous agent execution logs using terminal console inputs."
+          "Create your first custom Gem in the Gemini interface.",
+          "Write a strict system instruction profile defining boundaries and roles.",
+          "Test custom outputs and analyze how specific persona guidelines shape responses."
         ]
       },
       {
-        concept: "You will write a custom JavaScript wrapper that binds search APIs (such as Serper.dev or Google Custom Search) into an executable `Tool` class. You will write system prompts instructing the LLM to output its reasoning step-by-step using a structured `<thought>` block. In the terminal, you will run the agent and watch it execute a ReAct cycle: identifying that it needs competitive pricing, calling the Google Search tool, analyzing the raw snippet, and refining its final response dynamically based on live findings.",
-        architecture: "Prompt CoT ──> Tools Array [SearchAPI] ──> Run ReAct Loop ──> Observation ──> Solve",
+        concept: "Chain-of-Thought (CoT) prompting trains Gems to outline and explain their steps before presenting an answer. ReAct (Reasoning + Acting) guides them to evaluate if they need to call web search tools, search information otonomously, and refine drafts based on actual observations.",
+        architecture: "User Prompt ──> CoT Planning Step ──> Real-time Search Check ──> Analyze Snippets ──> High-Quality Report",
         checklist: [
-          "Write system prompts that enforce step-by-step thinking blocks prior to tool execution.",
-          "Bind a live HTTP-based web search tool wrapper using Axios to your agent's tools array.",
-          "Execute an autonomous research script and debug ReAct logs inside the server console."
+          "Apply CoT outlines to your Gem prompt instructions.",
+          "Test real-time search tool behaviors within Gems.",
+          "Compile a SEO trend briefing otonomously using search-enabled Gems."
         ]
       }
     ],
     2: [
       {
-        concept: "In this practical lab, you will write a comprehensive system instructions file for specialized roles: an SEO Specialist (focused on high search volume phrases), a Copywriter (using dynamic CTA hooks), and an Editor (enforcing rules against grammatical errors). You will configure the agent's properties using `response_format: { type: 'json_object' }` to force consistent JSON outputs, then write code to parse the JSON output directly to your client-side dashboard.",
-        architecture: "Define Role Persona ──> Set response_format: 'json_object' ──> Parse JSON in Express",
+        concept: "Structure a multi-persona pipeline where each Gem plays a contrasting, rigid role. The SEO Gem harvests trends, the Copywriter Gem drafts CTAs, and the Editor Gem enforces grammar rules to guarantee outstanding content output.",
+        architecture: "Define SEO Persona ──> Design Copywriter Persona ──> Design Editor Persona ──> Unified Output Schema",
         checklist: [
-          "Craft rigid role instructions to build contrasting agent writing voices.",
-          "Enforce absolute JSON responses using schemas to ensure safe UI parsing.",
-          "Apply maximum iteration counters as a guardrail to stop execution loops."
+          "Configure strict system persona instruction files for Gems.",
+          "Enforce clear markdown output blueprints for consistent UI layouts.",
+          "Apply response limits and iteration limits as a guardrail."
         ]
       },
       {
-        concept: "You will build a multi-agent routing loop. Using a central 'Supervisor' script, you will orchestrate worker nodes. The Supervisor will call the SEO Writer agent, read the draft, pass the text to the QA Editor agent, and route the final output back to a custom human approval dashboard. You will write code to manage a stateful `context` variable that updates dynamically as variables pass between agents.",
-        architecture: "Supervisor Node ──> Writer Agent ──> QA Editor Agent ──> Human Approval Checkpoint",
+        concept: "Coordinate Gems to work in sequence, where one Gem's output becomes the input for the next. Insert a supervisor reviewer Gem to audit final drafts and implement a human approval step before anything gets launched publicly.",
+        architecture: "SEO Gem Output ──> Writer Gem Drafting ──> Editor Gem Audit ──> User Approval Verification Screen",
         checklist: [
-          "Orchestrate a Supervisor router script to direct specialized workers.",
-          "Maintain a stateful memory variable that dynamically updates across worker files.",
-          "Build an interactive 'Approve / Reject' visual checkpoint for human intervention."
+          "Connect Gems sequentially to pass text drafts between personas.",
+          "Set up context-passing blueprints to maintain document details.",
+          "Design an 'Approve / Reject' visual checkpoint for manual human reviews."
         ]
       }
     ],
     3: [
       {
-        concept: "You will install cheerio and axios (`npm install cheerio axios`) to build a lightweight perayap agent. You will write a scraper script that fetches Google SERP markup, harvests high-density keywords, and compares metadata tags of top rankings. The agent will read this competitive data and autonomously output a rich, long-form markdown article designed to fit live SEO standards.",
-        architecture: "Axios Crawl SERP ──> Cheerio Parse Tags ──> Agent SEO Outliner ──> Markdown Writer",
+        concept: "Use the Antigravity assistant to search search trends, extract competitive landing page keywords, and draft long-form markdown blog articles that fit modern SEO best practices automatically.",
+        architecture: "Search Trends ──> Crawl Competitor Headers ──> Antigravity SEO Outliner ──> Draft Rich SEO Article",
         checklist: [
-          "Write code using Cheerio to extract competitive HTML headers and keywords.",
-          "Program an agent to analyze raw scraping objects and outline content.",
-          "Automate blog generation scripts to compose ready-to-publish Markdown articles."
+          "Scout competitor keyword densities using search-enabled agents.",
+          "Draft article structures dynamically using outlined SEO blueprints.",
+          "Generate finished SEO-optimized blog drafts automatically."
         ]
       },
       {
-        concept: "You will build an automated market intelligence system. You will write an agent script that scrapes rival product pages, extracts pricing columns, and maps feature grids. The script will format these findings into a detailed SWOT matrix, generate a dynamic PDF file, and automatically deliver the finished report directly to Slack channels using official Slack Incoming Webhooks.",
-        architecture: "Scrape rival pricing ──> Construct SWOT Markdown ──> Generate PDF ──> Post Slack Webhook",
+        concept: "Instruct Antigravity to gather competitive specifications, synthesize strengths and threats into a clean SWOT grid, and route finished executive briefs directly to Slack channels using simple automation pathways.",
+        architecture: "Gather Rival Data ──> Compile SWOT Grid ──> Format PDF / Brief ──> Automatic slack Delivery Channel",
         checklist: [
-          "Construct a web-scraping script targeting competitive landing pages.",
-          "Synthesize raw competitors' feature grids into structured SWOT Markdown files.",
-          "Connect Slack webhooks to automatically broadcast competitor intelligence reports."
+          "Program Antigravity to run competitor analysis sweeps.",
+          "Customize visual SWOT matrices and reporting templates.",
+          "Route finished briefs directly to communications channels like Slack."
         ]
       }
     ],
     4: [
       {
-        concept: "You will write a customer support routing pipeline. You will integrate the sentiment analysis model to classify incoming customer email tickets (Positive, Neutral, Urgent/Negative). If labeled 'Negative', your script will trigger a Slack alert to human support staff. You will also write a lead qualification agent that qualifies sales leads against business parameters, automatically writing data to HubSpot/CRM.",
-        architecture: "Email webhook ──> Sentiment Classifier ──> Trigger Slack Alert / Auto CRM Qualification",
+        concept: "Build visual AI mini-apps inside Google Opal's Labs canvas. Map input boxes, drag-and-drop Gemini-powered processing steps, and outline custom output views to create travel planners, data compilers, or outline tools visually.",
+        architecture: "Map Input Box ──> Drag-and-drop Gemini Step ──> Connect Workflow Logic ──> Instant App Share Link",
         checklist: [
-          "Build a support ticket sentiment analyst using system prompts and local JSON datasets.",
-          "Establish alert pipelines using webhook integrations to instantly notify human agents.",
-          "Setup automated CRM lead qualification steps based on company size and industry."
+          "Design custom inputs and outputs visually on the Google Opal canvas.",
+          "Map drag-and-drop AI steps to structure data processing workflows.",
+          "Generate app share links to distribute visual AI tools with your team."
         ]
       },
       {
-        concept: "You will build a natural language interface for database spreadsheets. You will configure an analytical agent using pandas (or a JavaScript equivalent like danfo.js) that reads sales records in CSV/Excel formats. The agent will autonomously run query filters, project seasonal sales demand curves, and compile dynamic inventory replenishment recommendations.",
-        architecture: "Upload CSV ──> Danfo.js/Pandas Parsing Agent ──> Forecast Trends ──> restocking recommendations",
+        concept: "Create a custom Opal app to score incoming customer inquiries otonomously based on budget and goals. Have Gemini draft personalized email follow-ups automatically to scale customer service for small businesses.",
+        architecture: "Client Inquiry Form ──> Opal Lead Scorer step ──> Custom Email Drafter step ──> Ready-to-send Email draft",
         checklist: [
-          "Query unstructured sales CSV spreadsheets using natural language conversation.",
-          "Identify seasonal spike trends and forecast demand values autonomously.",
-          "Generate predictive inventory restocking lists to prevent operational stockouts."
+          "Build a lead filtering app on Opal's visual drag-and-drop canvas.",
+          "Configure automated personalized email outreach and follow-up templates.",
+          "Scale daily customer management tasks visually without code."
         ]
       }
     ],
     5: [
       {
-        concept: "In this practical deployment session, you will connect your Node.js server to visual automation pipelines (Make.com, n8n, or Flowise). You will build an visual automation workflow: scheduling webhooks that trigger whenever a user sends an email or fills a spreadsheet row, routing that data to your Agent endpoint (`/api/agent/run`), and defining visual error-handling loops to manage network connection issues.",
-        architecture: "Webhooks (n8n/Make) ──> POST /api/agent/run ──> n8n Node Map ──> Visual Error Retry Nodes",
+        concept: "Connect Gems and Opal visual tools to visual low-code pipelines. Trigger automations to run otonomously whenever a customer sends an email or fills out a form, defining simple visual retry loops to manage minor connection drops.",
+        architecture: "Email Trigger event ──> Launch Visual Gems pipeline ──> Process Assets ──> Visual error handler step",
         checklist: [
-          "Connect visual automation platforms directly to your backend Node.js API endpoints.",
-          "Configure visual triggers for incoming email alerts and spreadsheet changes.",
-          "Design automated error retry loops and fallback routers inside visual node interfaces."
+          "Configure visual trigger events from external platforms like sheets or email.",
+          "Map visual low-code automation paths to transfer data.",
+          "Design visual error handling and retry steps to manage API timeouts."
         ]
       },
       {
-        concept: "You will execute a pre-launch optimization audit. You will write code to track and log token metrics, pruning prompt instructions to reduce API token costs. You will enable context caching to shave off 50% on API billing, run manual User Acceptance Tests (UAT) inside our interactive Sandbox interface, and execute the 10-point security checklist to protect API key vaults.",
-        architecture: "Track token sizes ──> Prune prompts & enable Cache ──> Run UAT ──> Secure API key Vaults",
+        concept: "Execute pre-launch audits. Track daily query quotas and prompt sizes to manage running token fees, execute team dry-runs (UAT) to confirm output quality, and complete the security checklist to protect workspace credentials.",
+        architecture: "Track Daily Queries ──> Prune Prompt steps ──> Team Dry-Runs (UAT) ──> Secure Workspace Credentials",
         checklist: [
-          "Audit API token overhead and calculate running operational costs.",
-          "Enable system context caching to reduce API billing rates.",
-          "Execute the 10-point deployment checklist covering firewalls and secure keys."
+          "Audit prompt token fees and daily query costs.",
+          "Run user acceptance test (UAT) dry-runs with team members.",
+          "Complete the 10-point launch checklist covering access control and keys."
         ]
       }
     ]
@@ -851,101 +865,101 @@ const sessionExplanations = {
   ID: {
     1: [
       {
-        concept: "Dalam sesi praktis ini, Anda akan menyiapkan lingkungan Node.js lokal, menginstal SDK resmi `@openai/agents` melalui terminal (`npm install @openai/agents`), dan mengonfigurasi `.env.local` Anda untuk menyimpan API key secara aman. Anda akan menulis file server Express (`server.js`) yang secara aman meneruskan permintaan ke model `gpt-4.1-nano`. Alih-alih memanggil completion sederhana, Anda akan menginisialisasi runner `Agent` stateful, menguji bagaimana agen menjadwalkan putaran secara otonom, mencatat aksi di konsol terminal, dan menyelesaikan tugas tanpa kebocoran kredensial di sisi browser.",
-        architecture: "npm install @openai/agents ──> Tulis API server.js ──> Jalankan Loop Runner ──> Output Konsol",
+        concept: "Gemini Gems memungkinkan pengguna bisnis merancang persona kustom khusus tanpa coding. Dengan mendefinisikan instruksi sistem, kepribadian peran, dan gaya output, Anda dapat melewati batasan chat AI standar dan membuat alat kerja yang andal.",
+        architecture: "Chat AI Generik ──> Kustomisasi Profil Gemini Gems ──> Instruksi Sistem Rigid ──> Asisten AI Spesialis",
         checklist: [
-          "Inisialisasi proyek Node.js dan kunci kredensial secara aman di .env.local.",
-          "Tulis endpoint POST Express yang aman untuk merutekan prompt agen dari sisi klien.",
-          "Periksa log eksekusi agen otonom menggunakan input konsol terminal."
+          "Buat Gemini Gems pertama Anda melalui antarmuka Gemini.",
+          "Tulis instruksi sistem yang mendetail untuk menetapkan tugas dan batasan Gems.",
+          "Uji respon kustom Gems dan evaluasi seberapa konsisten persona AI tersebut."
         ]
       },
       {
-        concept: "Anda akan menulis wrapper JavaScript kustom yang mengintegrasikan API pencarian (seperti Serper.dev atau Google Custom Search) ke dalam kelas `Tool` yang dapat dieksekusi. Anda akan menulis prompt sistem yang menginstruksikan LLM untuk mengeluarkan pemikirannya langkah-demi-langkah menggunakan blok `<thought>` terstruktur. Di terminal, Anda akan menjalankan agen dan melihatnya mengeksekusi siklus ReAct: mengidentifikasi kebutuhan harga kompetitor, memanggil alat pencari Google, menganalisis snippet mentah, dan menyempurnakan respons akhirnya secara dinamis berdasarkan temuan langsung.",
-        architecture: "Prompt CoT ──> Array Tools [SearchAPI] ──> Jalankan Loop ReAct ──> Observasi ──> Solusi",
+        concept: "Prompt Chain-of-Thought (CoT) melatih Gems untuk menjabarkan langkah berpikir mereka sebelum memberikan jawaban. Logika ReAct membimbing asisten AI untuk memikirkan solusi, memanggil alat pencari web otonom, dan merevisi draf berdasarkan data nyata.",
+        architecture: "Prompt User ──> Perencanaan Langkah CoT ──> Pencarian Web Real-time ──> Observasi Data ──> Laporan Berkualitas",
         checklist: [
-          "Tulis prompt sistem yang mewajibkan blok pemikiran langkah-demi-langkah sebelum eksekusi alat.",
-          "Hubungkan wrapper alat pencarian web berbasis HTTP menggunakan Axios ke array alat agen Anda.",
-          "Jalankan skrip riset otonom dan debug log ReAct di dalam konsol server."
+          "Terapkan instruksi berpikir CoT pada prompt asisten Gems Anda.",
+          "Uji fungsionalitas pencarian web real-time yang terintegrasi pada Gems.",
+          "Susun ringkasan tren pasar secara otomatis menggunakan Gems yang memiliki akses web."
         ]
       }
     ],
     2: [
       {
-        concept: "Dalam lab praktis ini, Anda akan menulis file instruksi sistem yang komprehensif untuk peran khusus: Spesialis SEO (fokus pada frasa volume pencarian tinggi), Copywriter (menggunakan hook CTA dinamis), dan Editor (menegakkan aturan anti-salah ketik). Anda akan mengonfigurasi properti agen menggunakan `response_format: { type: 'json_object' }` untuk memaksa output JSON yang konsisten, lalu menulis kode untuk mengurai output JSON tersebut langsung ke dashboard sisi klien Anda.",
-        architecture: "Tentukan Persona Peran ──> Atur response_format: 'json_object' ──> Urai JSON di Express",
+        concept: "Rancang kolaborasi multi-persona di mana setiap asisten Gems memegang peran rigid yang kontras. Gems SEO fokus pada tren pencarian, Gems Writer menyusun draf konten, dan Gems Editor mengoreksi tata bahasa untuk hasil tulisan premium.",
+        architecture: "Persona Gems SEO ──> Persona Gems Writer ──> Persona Gems Editor ──> Output Selaras",
         checklist: [
-          "Buat instruksi peran yang rigid untuk membangun gaya bahasa tulisan agen yang kontras.",
-          "Terapkan respons JSON mutlak menggunakan skema untuk memastikan penguraian UI yang aman.",
-          "Terapkan penghitung iterasi maksimum sebagai guardrail untuk menghentikan loop eksekusi."
+          "Susun instruksi rigid untuk masing-masing persona asisten Gems.",
+          "Terapkan panduan format markdown agar hasil kerja Gems selalu rapi.",
+          "Pasang pembatasan panjang teks dan iterasi untuk mengontrol jalannya Gems."
         ]
       },
       {
-        concept: "Anda akan membangun loop perutean multi-agen. Menggunakan skrip 'Supervisor' pusat, Anda akan mengatur node pekerja. Supervisor akan memanggil agen SEO Writer, membaca draf, meneruskan teks ke agen QA Editor, dan merutekan output akhir kembali ke dashboard persetujuan manusia kustom. Anda akan menulis kode untuk mengelola variabel `context` stateful yang diperbarui secara dinamis saat variabel dikirim antar-agen.",
-        architecture: "Node Supervisor ──> Agen Writer ──> Agen QA Editor ──> Checkpoint Persetujuan Manusia",
+        concept: "Hubungkan asisten Gems untuk bekerja berurutan, di mana hasil kerja Gems pertama menjadi data masukan bagi Gems berikutnya. Tambahkan Gems Supervisor sebagai editor peninjau dan terapkan pos persetujuan manual manusia sebelum dipublikasikan.",
+        architecture: "Output Gems SEO ──> Draf Gems Writer ──> Audit Editor Gems ──> Pos Persetujuan Manusia (HITL)",
         checklist: [
-          "Atur skrip router Supervisor untuk mengarahkan pekerja khusus.",
-          "Kelola variabel memori stateful yang diperbarui secara dinamis di seluruh file pekerja.",
-          "Bangun checkpoint visual 'Setujui / Tolak' interaktif untuk intervensi manusia."
+          "Hubungkan alur kerja Gems secara berurutan untuk mengirim data draf tulisan.",
+          "Terapkan pedoman pemindahan konteks informasi agar detail dokumen tidak hilang.",
+          "Bangun pos persetujuan manual (Setujui / Tolak) sebelum eksekusi rilis publik."
         ]
       }
     ],
     3: [
       {
-        concept: "Anda akan menginstal cheerio dan axios (`npm install cheerio axios`) untuk membangun agen perayap ringan. Anda akan menulis skrip scraper yang mengambil markup Google SERP, mengumpulkan kata kunci dengan kepadatan tinggi, dan membandingkan tag metadata dari peringkat teratas. Agen akan membaca data kompetitif ini dan secara otonom mengeluarkan artikel markdown panjang yang dirancang sesuai standar SEO langsung.",
-        architecture: "Axios Rayap SERP ──> Cheerio Urai Tag ──> Agen SEO Outliner ──> Penulis Markdown",
+        concept: "Gunakan asisten cerdas Antigravity untuk mencari tren kata kunci Google, merayap kata kunci kompetitor teratas secara otonom, dan merakit draf artikel blog panjang yang teroptimasi SEO secara otomatis.",
+        architecture: "Riset Tren ──> Deteksi Kata Kunci Kompetitor ──> Analisis Outliner Antigravity ──> Draf Blog SEO",
         checklist: [
-          "Tulis kode menggunakan Cheerio untuk mengekstrak header HTML kompetitif dan kata kunci.",
-          "Program agen untuk menganalisis objek perayapan mentah dan membuat outline konten.",
-          "Otomatiskan skrip pembuatan blog untuk menyusun artikel Markdown yang siap dipublikasikan."
+          "Analisis kepadatan kata kunci kompetitor secara otomatis menggunakan asisten AI.",
+          "Rancang struktur artikel blog secara dinamis menggunakan outline buatan agen.",
+          "Otomatiskan penyusunan blog artikel teroptimasi SEO yang siap pakai."
         ]
       },
       {
-        concept: "Anda akan membangun sistem intelijen pasar otomatis. Anda akan menulis skrip agen yang merayap halaman produk pesaing, mengekstrak kolom harga, dan memetakan kisi fitur. Skrip akan memformat temuan ini menjadi matriks SWOT terperinci, menghasilkan file PDF dinamis, dan secara otomatis mengirimkan laporan akhir langsung ke saluran Slack menggunakan Slack Incoming Webhooks resmi.",
-        architecture: "Rayap harga pesaing ──> Susun SWOT Markdown ──> Hasilkan PDF ──> Kirim Webhook Slack",
+        concept: "Instruksikan Antigravity untuk mengumpulkan data pesaing, menyusun kelebihan dan kelemahan mereka ke dalam matriks SWOT yang rapi, dan mengirimkan laporan briefing otomatis ke saluran Slack tim Anda secara instan.",
+        architecture: "Kumpulkan Data Pesaing ──> Kompilasi Tabel SWOT ──> Format Dokumen Laporan ──> Pengiriman Otomatis ke Slack",
         checklist: [
-          "Buat skrip perayapan web yang menargetkan halaman landing kompetitif.",
-          "Sintesis kisi fitur mentah pesaing menjadi file SWOT Markdown terstruktur.",
-          "Hubungkan webhook Slack untuk secara otomatis menyiarkan laporan intelijen kompetitor."
+          "Program asisten Antigravity untuk menyapu dan menganalisis situs produk pesaing.",
+          "Kustomisasi format tabel analisis SWOT dan template pelaporan.",
+          "Salurkan laporan analisis SWOT secara otomatis ke platform komunikasi Slack."
         ]
       }
     ],
     4: [
       {
-        concept: "Anda akan menulis alur perutean dukungan pelanggan. Anda akan mengintegrasikan model analisis sentimen untuk mengklasifikasikan tiket email pelanggan yang masuk (Positif, Netral, Mendesak/Negatif). Jika diberi label 'Negatif', skrip Anda akan memicu peringatan Slack ke staf dukungan manusia. Anda juga akan menulis agen kualifikasi prospek yang menguji prospek penjualan terhadap parameter bisnis, secara otomatis menulis data ke HubSpot/CRM.",
-        architecture: "Webhook email ──> Klasifikasi Sentimen ──> Pemicu Slack / Kualifikasi CRM Otomatis",
+        concept: "Bangun aplikasi mini AI secara visual di kanvas Labs Google Opal. Desain kotak input, letakkan langkah pemrosesan AI Gemini secara drag-and-drop, dan atur visual output untuk merakit alat pembuat konten, perencana, atau kuesioner tanpa kode.",
+        architecture: "Kotak Input Pengguna ──> Langkah Pemrosesan AI ──> Hubungkan Logika Alur ──> Link Akses Aplikasi",
         checklist: [
-          "Bangun analisis sentimen tiket bantuan menggunakan prompt sistem dan dataset JSON lokal.",
-          "Siapkan alur peringatan menggunakan integrasi webhook untuk segera memberi tahu agen manusia.",
-          "Terapkan langkah kualifikasi prospek CRM otomatis berdasarkan ukuran perusahaan dan industri."
+          "Desain elemen input dan output visual di kanvas drag-and-drop Google Opal.",
+          "Pasang langkah pemrosesan bertenaga AI Gemini untuk memproses data visual.",
+          "Hasilkan link akses aplikasi mini untuk membagikan tool buatan Anda ke rekan kerja."
         ]
       },
       {
-        concept: "Anda akan membangun antarmuka bahasa alami untuk spreadsheet database. Anda akan mengonfigurasi agen analitis menggunakan pandas (atau ekuivalen JavaScript seperti danfo.js) yang membaca catatan penjualan dalam format CSV/Excel. Agen akan secara otonom menjalankan filter kueri, memproyeksikan kurva permintaan penjualan musiman, dan menyusun rekomendasi pengisian ulang stok dinamis.",
-        architecture: "Unggah CSV ──> Agen Pengurai Danfo.js/Pandas ──> Proyeksi Tren ──> Rekomendasi Stok",
+        concept: "Buat aplikasi mini di Google Opal untuk menguji dan memberi skor calon prospek penjualan secara otonom. Biarkan asisten AI mendraf email penawaran personal secara otomatis untuk menghemat waktu operasional UMKM.",
+        architecture: "Formulir Masuk ──> Langkah Penilai Prospek Opal ──> Langkah Pembuat Email ──> Draf Email Siap Kirim",
         checklist: [
-          "Analisis data spreadsheet CSV penjualan menggunakan percakapan bahasa alami.",
-          "Identifikasi tren lonjakan musiman dan prediksikan nilai permintaan secara otonom.",
-          "Susun rekomendasi pengisian ulang stok barang untuk menghindari kelangkaan."
+          "Bangun aplikasi kualifikasi prospek pada kanvas visual Google Opal.",
+          "Konfigurasikan asisten pembuat draf email penawaran personal otomatis.",
+          "Otomatiskan pengelolaan komunikasi email pelanggan secara visual tanpa coding."
         ]
       }
     ],
     5: [
       {
-        concept: "Dalam sesi penyebaran praktis ini, Anda akan menghubungkan server Node.js Anda ke pipa otomatisasi visual (Make.com, n8n, atau Flowise). Anda akan membangun alur otomatisasi visual: menjadwalkan webhook yang terpicu setiap kali pengguna mengirim email atau mengisi baris spreadsheet, merutekan data tersebut ke endpoint Agen Anda (`/api/agent/run`), dan menentukan putaran penanganan error visual untuk mengelola masalah koneksi jaringan.",
-        architecture: "Webhook (n8n/Make) ──> POST /api/agent/run ──> Peta Node n8n ──> Node Retry Error Visual",
+        concept: "Sambungkan asisten Gems dan aplikasi visual Opal Anda ke pipa integrasi visual low-code. Otomatisasi alur kerja agar terpicu saat ada email baru masuk atau baris tabel diisi, serta pasang langkah retry visual jika jaringan lambat.",
+        architecture: "Email Masuk ──> Picu Otomatisasi Gems/Opal ──> Proses Informasi ──> Langkah Retry Ulang",
         checklist: [
-          "Hubungkan platform otomatisasi visual langsung ke endpoint API Node.js backend Anda.",
-          "Konfigurasikan pemicu visual untuk peringatan email masuk dan perubahan spreadsheet.",
-          "Rancang alur retry error otomatis dan router fallback di dalam antarmuka node visual."
+          "Konfigurasikan pemicu otomatisasi visual dari platform eksternal seperti email.",
+          "Hubungkan alur data secara visual antar-aplikasi no-code Anda.",
+          "Rancang langkah penanganan error visual jika terdapat koneksi API terputus."
         ]
       },
       {
-        concept: "Anda akan mengeksekusi audit optimasi sebelum rilis. Anda akan menulis kode untuk melacak dan mencatat metrik token, memangkas instruksi prompt untuk mengurangi biaya token API. Anda akan mengaktifkan cache konteks untuk menghemat hingga 50% pada tagihan API, menjalankan pengujian UAT manual di antarmuka Sandbox interaktif kami, dan menjalankan 10 poin checklist keamanan untuk melindungi kredensial API key.",
-        architecture: "Lacak ukuran token ──> Pangkas prompt & aktifkan Cache ──> Jalankan UAT ──> Amankan Kredensial",
+        concept: "Jalankan evaluasi pra-rilis. Pantau batas kueri harian dan token prompt untuk menghemat biaya operasional bulanan, lakukan uji coba bersama tim (UAT), dan terapkan checklist keamanan untuk melindungi kredensial akun.",
+        architecture: "Lacak Batas Kueri ──> Rapikan Instruksi Prompt ──> Uji Coba Tim (UAT) ──> Checklist Keamanan Akun",
         checklist: [
-          "Audit pengeluaran token API dan hitung biaya operasional harian.",
-          "Aktifkan sistem cache konteks untuk memotong biaya tagihan API hingga 50%.",
-          "Jalankan 10 poin checklist rilis produksi mencakup keamanan firewall dan kredensial."
+          "Audit konsumsi token prompt dan kuota kueri harian.",
+          "Lakukan uji coba simulasi draf buatan asisten bersama rekan kerja tim Anda.",
+          "Selesaikan 10 poin checklist peluncuran untuk memastikan keamanan akun."
         ]
       }
     ]
@@ -1435,9 +1449,72 @@ const moduleQuestions = {
   }
 };
 
+const getFallbackResponse = (prompt, moduleIdx, lang) => {
+  const isId = lang === "ID";
+  const p = prompt.toLowerCase();
+  
+  if (moduleIdx === 0) {
+    if (p.includes("maksud") || p.includes("apa") || p.includes("jelas")) {
+      return isId 
+        ? "Tentu! Di Modul 1 ini, maksud dari **Agentic AI** adalah teknologi kecerdasan buatan yang tidak hanya pasif menjawab pertanyaan (seperti ChatGPT biasa), melainkan bisa bertindak mandiri secara otonom untuk menyelesaikan tugas bisnis Anda. Prakteknya bisa menggunakan **Gemini Gems** untuk membuat asisten kustom sesuai kebutuhan peran bisnis Anda tanpa perlu mengerti bahasa pemrograman sama sekali."
+        : "Sure! In Module 1, **Agentic AI** refers to AI systems that don't just passively answer questions, but can actively plan, reason, and use tools (like web search) autonomously to achieve business goals. You can practice this easily by creating custom **Gemini Gems** for specific roles without writing any code.";
+    }
+    return isId
+      ? `Pertanyaan yang bagus sekali tentang Fondasi Agentic AI! Di sesi ini, kita belajar merancang prompt terstruktur (Chain-of-Thought) pada **Gemini Gems** agar asisten kustom Anda bisa melakukan riset pasar dan SEO secara otomatis. Anda tidak perlu coding, cukup jelaskan peran dan instruksi sistemnya dengan bahasa sehari-hari.`
+      : `That is a wonderful question about Agentic AI Foundations! In this session, we learn how to structure step-by-step thinking using **Gemini Gems** to search SEO trends. No coding required, just define your Gem's role and rules in plain language.`;
+  }
+  
+  if (moduleIdx === 1) {
+    if (p.includes("maksud") || p.includes("apa") || p.includes("jelas")) {
+      return isId
+        ? "Maksud dari **Kolaborasi Multi-Agent** adalah menghubungkan beberapa asisten Gems kustom Anda agar bisa bekerja sama dalam satu alur kerja terpadu (pipeline). Misalnya: Gems SEO meriset tren kata kunci -> hasilnya otomatis diteruskan ke Gems Copywriter untuk membuat iklan -> hasilnya dikoreksi oleh Gems Editor. Anda juga bisa menyisipkan pos persetujuan manusia sebelum draf dipublikasikan."
+        : "By **Multi-Agent Collaboration**, we mean connecting multiple specialized Gems to work together in a pipeline. For example, your SEO Gem gathers keywords, passes them to your Copywriter Gem for drafting, which is then audited by your Editor Gem. You can also insert manual approval checkposts for quality control.";
+    }
+    return isId
+      ? "Menarik sekali! Merancang kolaborasi tim asisten **Gemini Gems** sangat membantu mempercepat produksi konten pemasaran yang konsisten. Dengan membagi tugas ke beberapa asisten spesifik (SEO, Writer, Editor), hasil kerja asisten AI akan jauh lebih berkualitas dibanding chat sekali pakai."
+      : "Very interesting! Connecting specialized **Gemini Gems** in a pipeline dramatically scales consistent marketing content creation. By delegating tasks between Gems (SEO, Writer, Editor), the final output is much higher quality.";
+  }
+  
+  if (moduleIdx === 2) {
+    if (p.includes("maksud") || p.includes("apa") || p.includes("jelas")) {
+      return isId
+        ? "Di Modul 3 ini, otomatisasi pemasaran menggunakan asisten **Antigravity** dimaksudkan untuk membebaskan Anda dari tugas riset manual yang melelahkan. Antigravity akan bertindak secara mandiri mencari tren kata kunci terbaru di Google, merangkum strategi kompetitor menjadi tabel analisis SWOT, dan langsung merutekan draf laporannya ke saluran Slack atau email Anda."
+        : "In Module 3, marketing automation with **Antigravity** means freeing you from tedious manual research. Antigravity acts autonomously to scout search trends, summarize competitive features into a SWOT matrix, and route finished reports straight to your Slack channel.";
+    }
+    return isId
+      ? "Luar biasa! Otomatisasi pemasaran dengan asisten cerdas **Antigravity** mempermudah UMKM memantau pasar. Anda cukup menginstruksikan asisten untuk merangkum kelebihan kompetitor dan menulis draf konten SEO otomatis tanpa perlu menyalin teks manual."
+      : "Excellent! Marketing automation with the **Antigravity** assistant makes market tracking easy for SMBs. Just instruct the agent to analyze rival sites and draft SEO blogs otonomously.";
+  }
+  
+  if (moduleIdx === 3) {
+    if (p.includes("maksud") || p.includes("apa") || p.includes("jelas") || p.includes("opal")) {
+      return isId
+        ? "Maksud dari **Google Opal** adalah platform no-code eksperimental dari **Google Labs** di mana Anda bisa merancang aplikasi mini AI sendiri secara visual menggunakan drag-and-drop. Di modul 4 ini, kita menggunakannya untuk membuat prototype aplikasi kualifikasi prospek penjualan dan otomatisasi email tindak lanjut tanpa perlu mengerti pemrograman database."
+        : "**Google Opal** is an experimental no-code platform from **Google Labs** where you can design custom AI mini-apps visually via drag-and-drop. In Module 4, we use it to build sales lead qualification tools and automated email outreach workflows without database programming.";
+    }
+    return isId
+      ? "Pertanyaan menarik! Membuat prototype aplikasi mini di **Google Opal** sangat memudahkan operasional bisnis harian. Anda bisa memetakan formulir masuk, memasang langkah logika AI Gemini, dan menghasilkan email follow-up personal secara instan tanpa menulis satu baris kode pun."
+      : "Great question! Building visual mini-apps on **Google Opal** makes SMB ops incredibly efficient. You can map input forms, drag-and-drop Gemini AI steps, and compile instant personalized outreach links without code.";
+  }
+  
+  if (moduleIdx === 4) {
+    if (p.includes("maksud") || p.includes("apa") || p.includes("jelas")) {
+      return isId
+        ? "Maksud dari **Orkestrasi Low-Code & Launch** adalah tahap menghubungkan asisten Gems dan aplikasi visual Opal Anda ke pemicu otomatisasi harian (misalnya, jalan otomatis jika ada email baru atau baris tabel baru terisi). Serta bagaimana mengaudit kuota kueri harian agar biaya operasional tetap hemat dan aman."
+        : "**Low-code Orchestration & Launch** is the final step where you connect your custom Gems and visual Opal apps to automated daily triggers (like a new email or sheet row) and audit prompt costs to keep operations secure and cost-efficient.";
+    }
+    return isId
+      ? "Langkah penting! Sebelum meluncurkan otomatisasi asisten AI ke operasional bisnis nyata, Anda harus memastikan kuota kueri harian terpantau dengan baik untuk menghindari biaya membengkak, serta melakukan simulasi uji coba bersama tim."
+      : "Crucial step! Prior to deploying AI automations to real business operations, you must manage daily query limits to control running token costs and run acceptance test runs with your team.";
+  }
+  
+  return isId
+    ? "Halo! Saya adalah AI-Mentor yang siap membantu Anda dalam kursus ini. Silakan tanyakan materi apa pun terkait Gemini Gems, Google Opal, atau otomatisasi Antigravity!"
+    : "Hello! I am your AI-Mentor, here to help you in this course. Please ask anything about Gemini Gems, Google Opal, or Antigravity automations!";
+};
 
 export default function LensetekAgenticAiLandingPage() {
-  const [lang, setLang] = useState("ID"); // "EN" or "ID"
+  const [lang, setLang] = useState(() => localStorage.getItem("course_lang") || "ID"); // "EN" or "ID"
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -1445,8 +1522,11 @@ export default function LensetekAgenticAiLandingPage() {
   const [user, setUser] = useState(null);
 
   // Classroom Dashboard States
-  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
-  const [classroomTab, setClassroomTab] = useState("materials"); // "materials" | "lab" | "quiz" | "certificate"
+  const [activeModuleIdx, setActiveModuleIdx] = useState(() => {
+    const v = localStorage.getItem("course_active_module");
+    return v !== null ? parseInt(v, 10) : 0;
+  });
+  const [classroomTab, setClassroomTab] = useState(() => localStorage.getItem("course_classroom_tab") || "materials"); // "materials" | "lab" | "quiz" | "certificate"
   const [completedModules, setCompletedModules] = useState({}); // { moduleId: true }
   const [quizQuestionIdx, setQuizQuestionIdx] = useState(0);
   const [quizSelectedAnswers, setQuizSelectedAnswers] = useState([null, null, null, null, null]);
@@ -1557,7 +1637,7 @@ export default function LensetekAgenticAiLandingPage() {
       completionDate: issuedAt.toISOString(),
       validUntil: validUntil.toISOString(),
       verificationUrl,
-      transcript: t.ID.modulesList.map((module) => ({
+      transcript: t.EN.modulesList.map((module) => ({
         moduleId: module.id,
         title: module.title,
         hours: module.hours,
@@ -1699,6 +1779,31 @@ export default function LensetekAgenticAiLandingPage() {
     }
   }, [user]);
 
+  // Persistent Firebase Authentication State Observer
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Sync routing states to localStorage to persist on page refresh
+  useEffect(() => {
+    localStorage.setItem("course_lang", lang);
+  }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem("course_active_module", activeModuleIdx);
+  }, [activeModuleIdx]);
+
+  useEffect(() => {
+    localStorage.setItem("course_classroom_tab", classroomTab);
+  }, [classroomTab]);
+
   const handleBiodataSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
@@ -1738,6 +1843,12 @@ export default function LensetekAgenticAiLandingPage() {
     try {
       await signOut(auth);
       setUser(null);
+      
+      // Clean up classroom routing states from localStorage on manual logout
+      localStorage.removeItem("course_active_module");
+      localStorage.removeItem("course_classroom_tab");
+      localStorage.removeItem("course_lang");
+
       // Reset classroom states
       setActiveModuleIdx(0);
       setClassroomTab("materials");
@@ -1878,7 +1989,7 @@ export default function LensetekAgenticAiLandingPage() {
     } catch (error) {
       console.warn("Lab Agent API unreachable:", error.message);
       // Fallback response for interactive preview
-      finalOutput = `That is a brilliant question about ${activeModuleTitle}! To implement this, you should design a robust supervisor node that delegates tasks to worker agents, utilizing tool definitions for web search and CSV parsing. Perfect choice of operational workflow!`;
+      finalOutput = getFallbackResponse(labPrompt, activeModuleIdx, lang);
       setLabLogs(prev => [
         ...prev, 
         `🤖 [Agent (Demo Mode)]: ${finalOutput}`
@@ -1913,7 +2024,7 @@ export default function LensetekAgenticAiLandingPage() {
 
   const currentT = t[lang];
   const allModulesCompleted = currentT.modulesList.every(m => completedModules[m.id]);
-  const isVerificationPage = window.location.pathname.startsWith("/verify/");
+  const isVerificationPage = window.location.pathname.startsWith("/verify");
   const verificationCertificateNo = isVerificationPage
     ? decodeURIComponent(window.location.pathname.replace(/^\/verify\/?/, "")).trim()
     : "";
@@ -1953,12 +2064,12 @@ export default function LensetekAgenticAiLandingPage() {
             </div>
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-cyan-700">Lensetek Certificate Verification</p>
-              <h1 className="text-2xl font-extrabold text-slate-900">Verifikasi Sertifikat</h1>
+              <h1 className="text-2xl font-extrabold text-slate-900">Certificate Verification</h1>
             </div>
           </div>
 
           {verificationLoading ? (
-            <div className="py-12 text-center text-sm font-semibold text-slate-500">Memeriksa sertifikat...</div>
+            <div className="py-12 text-center text-sm font-semibold text-slate-500">Verifying certificate...</div>
           ) : verificationRecord ? (
             <div className="space-y-6 pt-6">
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left">
@@ -2002,13 +2113,28 @@ export default function LensetekAgenticAiLandingPage() {
                 </div>
               </div>
             </div>
+          ) : verificationCertificateNo ? (
+            <div className="py-12 text-center">
+              <p className="text-lg font-extrabold text-rose-700">Certificate Not Found</p>
+              <p className="mt-2 text-sm text-slate-500">Certificate number `{verificationCertificateNo}` is not registered or has not been issued yet.</p>
+              <a href="/verify" className="mt-4 inline-block rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-colors">Search Again</a>
+            </div>
           ) : (
             <div className="py-12 text-center">
-              <p className="text-lg font-extrabold text-rose-700">Sertifikat tidak ditemukan</p>
-              <p className="mt-2 text-sm text-slate-500">Nomor sertifikat `{verificationCertificateNo}` belum terdaftar atau belum diterbitkan.</p>
+              <p className="text-lg font-extrabold text-slate-700">Verify Certificate Authenticity</p>
+              <p className="mt-2 text-sm text-slate-500">Enter your certificate registration number to verify its authenticity.</p>
+              <form onSubmit={(e) => { e.preventDefault(); const no = new FormData(e.target).get('certNo'); if(no) window.location.href = `/verify/${no}`; }} className="mt-6 flex flex-col sm:flex-row max-w-md mx-auto items-center gap-2">
+                <input type="text" name="certNo" placeholder="Certificate Number" className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500" required />
+                <button type="submit" className="w-full sm:w-auto rounded-xl bg-[#091A36] px-5 py-3 text-sm font-bold text-white hover:bg-slate-800 shrink-0 transition-colors">Verify</button>
+              </form>
             </div>
           )}
         </section>
+        <div className="mt-8 text-center">
+          <a href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">
+            <ArrowRight className="h-4 w-4 rotate-180" /> Back to Home
+          </a>
+        </div>
       </main>
     );
   }
@@ -2193,6 +2319,12 @@ export default function LensetekAgenticAiLandingPage() {
             >
               {currentT.navUseCases}
             </a>
+            <a 
+              href="/verify" 
+              className="hover:text-cyan-600 transition-colors cursor-pointer font-semibold text-sm"
+            >
+              {lang === "EN" ? "Verify Certificate" : "Verifikasi"}
+            </a>
           </div>
 
           <div className="hidden items-center gap-4 md:flex">
@@ -2340,10 +2472,10 @@ export default function LensetekAgenticAiLandingPage() {
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mx-auto max-w-7xl px-6 py-12 lg:px-8"
+          className="mx-auto max-w-7xl px-6 py-12 lg:px-8 print-section"
         >
           {/* Welcome Banner */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-cyan-50 to-indigo-50/50 border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm mb-8 font-sans">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-cyan-50 to-indigo-50/50 border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm mb-8 font-sans no-print">
             <div>
               <p className="text-xs font-bold text-cyan-600 uppercase tracking-widest">{currentT.classroomHeader}</p>
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 font-['Plus_Jakarta_Sans'] mt-1">
@@ -2360,10 +2492,10 @@ export default function LensetekAgenticAiLandingPage() {
             </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+          <div className="grid gap-6 lg:grid-cols-[290px_1fr] classroom-layout-grid">
             
             {/* LEFT SIDEBAR: Modules Navigator & Certificate */}
-            <div className="space-y-4">
+            <div className="space-y-4 no-print">
               <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
                 <h3 className="font-extrabold text-xs text-slate-400 uppercase tracking-wider mb-4 px-2">{currentT.sidebarHeader}</h3>
                 <div className="space-y-2">
@@ -2380,25 +2512,25 @@ export default function LensetekAgenticAiLandingPage() {
                           setQuizSubmitted(false);
                           setQuizFeedback("");
                         }}
-                        className={`w-full flex items-center justify-between p-3.5 rounded-2xl border text-left transition-all ${
+                        className={`w-full flex items-start justify-between p-3.5 rounded-2xl border text-left transition-all ${
                           isActive 
                             ? 'border-cyan-500 bg-cyan-50/50 shadow-sm text-cyan-700 font-bold' 
                             : 'border-slate-100 bg-white hover:bg-slate-50'
                         }`}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 ${
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5 ${
                             isActive ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-500'
                           }`}>
                             0{m.id}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-extrabold text-xs text-slate-800 truncate">{m.title}</p>
+                            <p className="font-extrabold text-xs text-slate-800 leading-snug">{m.title}</p>
                             <p className="text-[10px] text-slate-400 mt-0.5">{m.hours}</p>
                           </div>
                         </div>
                         {isCompleted && (
-                          <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0">
+                          <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0 mt-1">
                             ✓
                           </span>
                         )}
@@ -2412,23 +2544,25 @@ export default function LensetekAgenticAiLandingPage() {
               <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm text-left font-sans">
                 <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
                   <h4 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">📋 Biodata Mahasiswa</h4>
-                  <button 
-                    onClick={() => {
-                      setBiodataForm(biodata || {
-                        fullName: user?.displayName || "",
-                        email: user?.email || "",
-                        whatsapp: "",
-                        birthPlace: "",
-                        birthDate: "",
-                        gender: "Laki-laki",
-                        occupation: "Mahasiswa / Pelajar"
-                      });
-                      setShowBiodataModal(true);
-                    }}
-                    className="text-[10px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors cursor-pointer"
-                  >
-                    ✏️ Edit
-                  </button>
+                  {!certificateRecord && (
+                    <button 
+                      onClick={() => {
+                        setBiodataForm(biodata || {
+                          fullName: user?.displayName || "",
+                          email: user?.email || "",
+                          whatsapp: "",
+                          birthPlace: "",
+                          birthDate: "",
+                          gender: "Laki-laki",
+                          occupation: "Mahasiswa / Pelajar"
+                        });
+                        setShowBiodataModal(true);
+                      }}
+                      className="text-[10px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors cursor-pointer"
+                    >
+                      ✏️ Edit
+                    </button>
+                  )}
                 </div>
                 {biodata ? (
                   <div className="space-y-2 text-[11px] text-slate-600 font-semibold">
@@ -2475,7 +2609,7 @@ export default function LensetekAgenticAiLandingPage() {
             </div>
 
             {/* RIGHT WORK ZONE: Materials, Lab, Quizzes */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm relative min-h-[500px]">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm relative min-h-[500px] classroom-workzone">
               
               {/* Tab Selector */}
               {classroomTab !== "certificate" && (
@@ -2771,10 +2905,19 @@ export default function LensetekAgenticAiLandingPage() {
                     <button 
                       onClick={() => handleLabExecute(currentT.modulesList[activeModuleIdx].title)}
                       disabled={labLoading || !labPrompt.trim()}
-                      className="rounded-xl bg-cyan-500 px-5 text-white flex items-center justify-center hover:bg-cyan-600 transition-all cursor-pointer disabled:opacity-50"
+                      className="rounded-xl bg-cyan-500 px-5 text-white flex items-center justify-center hover:bg-cyan-600 transition-all cursor-pointer disabled:opacity-50 shrink-0"
                     >
                       <Send className="h-4 w-4" />
                     </button>
+                    <a 
+                      href="https://chatgpt.com/g/g-6a1d5f5c450881919e9bbee90b26818b-agentic-ai-for-marketing-and-business-mini-course" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-xl bg-[#10A37F] px-4 text-white flex items-center justify-center hover:bg-[#0E906F] transition-all cursor-pointer shrink-0"
+                      title="AI-Mentor ChatGPT"
+                    >
+                      <ChatGPTIcon className="h-5 w-5" />
+                    </a>
                   </div>
                 </motion.div>
               )}
@@ -2860,7 +3003,7 @@ export default function LensetekAgenticAiLandingPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="space-y-6 text-center animate-fade-in"
                 >
-                  <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-4 no-print">
                     <h3 className="text-lg font-bold text-slate-800 font-['Plus_Jakarta_Sans']">🎓 {currentT.certHeader}</h3>
                     <button 
                       onClick={() => setClassroomTab("materials")}
@@ -2871,91 +3014,249 @@ export default function LensetekAgenticAiLandingPage() {
                   </div>
 
                   {!certificateRecord ? (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-sm font-bold text-amber-800">
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-sm font-bold text-amber-800 no-print">
                       Menerbitkan sertifikat dan nomor verifikasi...
                     </div>
                   ) : (
                     <>
-                      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-2xl">
-                        <div className="relative aspect-[1536/1080] w-full">
-                          <img
-                            src="/cert-template.png"
-                            alt="Lensetek certificate template"
-                            className="absolute inset-0 h-full w-full object-cover"
-                          />
-
-                          <div className="absolute right-[7%] top-[6.5%] rounded-lg bg-white/85 px-3 py-2 text-right shadow-sm">
-                            <p className="text-[clamp(6px,0.7vw,10px)] font-extrabold uppercase tracking-wider text-slate-500">Certificate No.</p>
-                            <p className="font-mono text-[clamp(7px,0.9vw,13px)] font-extrabold text-[#091A36]">{certificateRecord.certificateNo}</p>
-                          </div>
-
-                          <div className="absolute left-[24%] right-[21%] top-[45.4%] bg-white/90 px-4 py-1 text-center">
-                            <p className="font-serif text-[clamp(16px,3.1vw,46px)] font-extrabold leading-tight text-[#091A36]">
-                              {certificateRecord.holderName}
-                            </p>
-                          </div>
-
-                          <div className="absolute bottom-[7.8%] left-[23.8%] flex items-end gap-3 rounded-xl bg-white/90 px-3 py-2 text-left shadow-sm">
+                      <div className="print-container space-y-8">
+                        {/* Page 1: Certificate */}
+                        <div className="print-page print-cert-wrapper mx-auto max-w-6xl overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-2xl">
+                          <div className="relative aspect-[1536/1080] w-full">
                             <img
-                              src={getQrCodeUrl(`Digitally signed by Astrid, Program Director, Lensetek International, LLC. Certificate: ${certificateRecord.certificateNo}`, 92)}
-                              alt="Astrid digital signature QR code"
-                              className="h-[clamp(38px,6vw,74px)] w-[clamp(38px,6vw,74px)]"
+                              src="/cert-template.png"
+                              alt="Lensetek certificate template"
+                              className="absolute inset-0 h-full w-full object-cover"
                             />
+
+                            <div className="absolute right-[7%] top-[6.5%] rounded-lg bg-white/85 px-3 py-2 text-right shadow-sm border border-slate-100/50">
+                              <p className="text-[clamp(6px,0.7vw,10px)] font-extrabold uppercase tracking-wider text-slate-500">Certificate No.</p>
+                              <p className="font-mono text-[clamp(7px,0.9vw,13px)] font-extrabold text-[#091A36]">{certificateRecord.certificateNo}</p>
+                            </div>
+
+                            {/* Participant Name: 100% transparent, positioned elegantly without covering the "has successfully completed" template text */}
+                            <div className="absolute left-[15%] right-[15%] top-[40.8%] text-center">
+                              <p className="font-serif text-[clamp(18px,3.3vw,48px)] font-extrabold leading-tight text-[#091A36]">
+                                {certificateRecord.holderName}
+                              </p>
+                            </div>
+
+                            {/* Astrid's digital signature QR block: transparent container sitting beautifully above the line without covering "Program Director" */}
+                            <div className="absolute bottom-[10.2%] left-[24.2%] flex items-end gap-2 bg-transparent text-left">
+                              <img
+                                src={getQrCodeUrl(`Digitally signed by Astrid, Program Director, Lensetek International, LLC. Certificate: ${certificateRecord.certificateNo}`, 92)}
+                                alt="Astrid digital signature QR code"
+                                className="h-[clamp(38px,5.5vw,72px)] w-[clamp(38px,5.5vw,72px)] bg-white p-1 rounded-lg border border-slate-100 shadow-sm"
+                              />
+                              <div className="mb-0.5">
+                                <p className="font-serif text-[clamp(12px,1.5vw,22px)] font-bold text-[#091A36] leading-none mb-0.5">Astrid</p>
+                                <p className="text-[clamp(6px,0.7vw,9px)] font-extrabold uppercase tracking-wider text-slate-400">QR Signature</p>
+                              </div>
+                            </div>
+
+                            {/* Valid Until: 100% solid white card placed to cover the template's hardcoded date completely and dynamically overlay ours */}
+                            <div className="absolute bottom-[4.2%] left-[44.0%] w-[16.5%] rounded-xl bg-white px-2 py-1.5 text-center shadow-md border border-slate-100/50 z-10">
+                              <p className="text-[clamp(6px,0.7vw,9px)] font-extrabold uppercase tracking-wider text-slate-400">Valid Until</p>
+                              <p className="text-[clamp(8px,1.05vw,15px)] font-extrabold text-[#091A36] mt-0.5">
+                                {formatDisplayDate(certificateRecord.validUntil, "en-US")}
+                              </p>
+                            </div>
+
+                            {/* Date of Completion: 100% solid white card placed to cover the template's hardcoded date completely and dynamically overlay ours */}
+                            <div className="absolute bottom-[4.2%] right-[21.0%] w-[17.5%] rounded-xl bg-white px-2 py-1.5 text-center shadow-md border border-slate-100/50 z-10">
+                              <p className="text-[clamp(6px,0.7vw,9px)] font-extrabold uppercase tracking-wider text-slate-400">Date of Completion</p>
+                              <p className="text-[clamp(8px,1.05vw,15px)] font-extrabold text-[#091A36] mt-0.5">
+                                {formatDisplayDate(certificateRecord.completionDate, "en-US")}
+                              </p>
+                            </div>
+
+                            <div className="absolute bottom-[4.2%] right-[6.6%] rounded-xl bg-white p-2 text-center shadow-md border border-slate-100/50 z-10">
+                              <img
+                                src={getQrCodeUrl(certificateRecord.verificationUrl, 116)}
+                                alt="Certificate verification QR code"
+                                className="h-[clamp(48px,6.5vw,86px)] w-[clamp(48px,6.5vw,86px)]"
+                              />
+                              <p className="mt-1 text-[clamp(5px,0.6vw,8.5px)] font-extrabold uppercase tracking-wider text-cyan-600">Verify</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Page 2: Transcript with Participant Name, Validity, and Astrid Signature block */}
+                        <div className="print-page print-transcript-wrapper mx-auto max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm font-sans">
+                          <div className="flex flex-col gap-2 border-b border-slate-100 pb-4 md:flex-row md:items-end md:justify-between">
                             <div>
-                              <p className="font-serif text-[clamp(12px,1.6vw,24px)] font-bold text-[#091A36]">Astrid</p>
-                              <p className="text-[clamp(6px,0.75vw,10px)] font-bold uppercase tracking-wider text-slate-500">QR Signature</p>
+                              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-cyan-700">Official Transcript</p>
+                              <h4 className="text-xl font-extrabold text-[#091A36] font-['Plus_Jakarta_Sans']">Academic Transcript of Course Completion</h4>
+                            </div>
+                            <p className="font-mono text-xs font-bold text-slate-500">{certificateRecord.certificateNo}</p>
+                          </div>
+
+                          {/* Participant and Summary Blocks */}
+                          <div className="mt-6 flex flex-col md:flex-row gap-6 items-stretch justify-between">
+                            {/* Left Card: Participant Info */}
+                            <div className="flex-1 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm flex flex-col justify-between">
+                              <div className="grid grid-cols-[120px_10px_1fr] items-center gap-y-3 text-xs text-slate-700 font-semibold">
+                                <div className="flex items-center gap-2 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                                  <User className="h-3.5 w-3.5 text-cyan-600" /> Participant
+                                </div>
+                                <div className="text-slate-400">:</div>
+                                <div className="font-extrabold text-[#091A36] text-sm leading-none">{certificateRecord.holderName}</div>
+
+                                <div className="flex items-center gap-2 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                                  <BookOpen className="h-3.5 w-3.5 text-cyan-600" /> Program
+                                </div>
+                                <div className="text-slate-400">:</div>
+                                <div className="font-extrabold text-slate-800 leading-none">Mini Course</div>
+
+                                <div className="flex items-center gap-2 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                                  <Award className="h-3.5 w-3.5 text-cyan-600" /> Course
+                                </div>
+                                <div className="text-slate-400">:</div>
+                                <div className="font-extrabold text-slate-800 leading-none">Agentic AI for Marketing & Business</div>
+
+                                <div className="flex items-center gap-2 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                                  <Clock className="h-3.5 w-3.5 text-cyan-600" /> Total Duration
+                                </div>
+                                <div className="text-slate-400">:</div>
+                                <div className="font-extrabold text-slate-800 leading-none">20 Hours</div>
+
+                                <div className="flex items-center gap-2 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                                  <TrendingUp className="h-3.5 w-3.5 text-cyan-600" /> Level
+                                </div>
+                                <div className="text-slate-400">:</div>
+                                <div className="font-extrabold text-slate-800 leading-none">Beginner – Intermediate</div>
+                              </div>
+                            </div>
+
+                            {/* Right Card: Summary Badges */}
+                            <div className="w-full md:w-[48%] rounded-2xl border border-amber-200 bg-amber-50/20 p-5 shadow-sm flex flex-col justify-between">
+                              <p className="text-center font-extrabold text-[10px] uppercase tracking-wider text-slate-400 border-b border-amber-200 pb-2">Summary</p>
+                              
+                              <div className="grid grid-cols-3 gap-2 mt-4 text-center h-full">
+                                <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-white shadow-sm border border-slate-100/50">
+                                  <Clock className="h-6 w-6 text-amber-500 mb-1" />
+                                  <p className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wide leading-none">Total Duration</p>
+                                  <p className="text-xs font-black text-[#091A36] mt-2">20 Hours</p>
+                                </div>
+
+                                <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-white shadow-sm border border-slate-100/50">
+                                  <BookOpen className="h-6 w-6 text-amber-500 mb-1" />
+                                  <p className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wide leading-none">Total Modules</p>
+                                  <p className="text-xs font-black text-[#091A36] mt-2">5 Modules</p>
+                                </div>
+
+                                <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-white shadow-sm border border-slate-100/50">
+                                  <Award className="h-6 w-6 text-amber-500 mb-1" />
+                                  <p className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wide leading-tight">Overall Performance</p>
+                                  <p className="text-[10px] font-black text-emerald-600 mt-2 leading-none">Completed Satisfactory</p>
+                                </div>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="absolute bottom-[7.6%] left-[45.2%] w-[14%] rounded-lg bg-white/95 px-2 py-1 text-center">
-                            <p className="text-[clamp(6px,0.75vw,10px)] font-bold text-slate-500">Valid Until</p>
-                            <p className="text-[clamp(8px,1.05vw,15px)] font-extrabold text-[#091A36]">
-                              {formatDisplayDate(certificateRecord.validUntil, "en-US")}
-                            </p>
+                          {/* Academic Table Block */}
+                          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                            <table className="w-full text-left border-collapse text-xs">
+                              <thead>
+                                <tr className="bg-[#091A36] text-white uppercase text-[9px] tracking-wider font-extrabold">
+                                  <th className="py-3.5 px-4 border-b border-slate-800 text-center w-[6%]">No.</th>
+                                  <th className="py-3.5 px-4 border-b border-slate-800 w-[30%]">Module</th>
+                                  <th className="py-3.5 px-4 border-b border-slate-800 text-center w-[12%]">Duration</th>
+                                  <th className="py-3.5 px-4 border-b border-slate-800 w-[39%]">Description</th>
+                                  <th className="py-3.5 px-4 border-b border-slate-800 text-center w-[13%]">Performance</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100 font-semibold text-slate-600">
+                                {[
+                                  {
+                                    no: 1,
+                                    title: "Foundations of Agentic AI & Paradigm Shift",
+                                    duration: "3 Hours",
+                                    description: "Understand core concepts of Agentic AI, agent architecture, memory, tools, and how agents think and act autonomously.",
+                                    performance: "Completed"
+                                  },
+                                  {
+                                    no: 2,
+                                    title: "Core Skills & Workflow Architecture",
+                                    duration: "4 Hours",
+                                    description: "Master advanced prompt engineering, persona design, guardrails, and multi-agent workflow orchestration.",
+                                    performance: "Completed"
+                                  },
+                                  {
+                                    no: 3,
+                                    title: "Agentic AI for Marketing Automation",
+                                    duration: "5 Hours",
+                                    description: "Build autonomous systems for content marketing, SEO research, competitor intelligence, and automated reporting.",
+                                    performance: "Completed"
+                                  },
+                                  {
+                                    no: 4,
+                                    title: "Agentic AI for Business Operations & SMEs",
+                                    duration: "5 Hours",
+                                    description: "Design agents for customer support, lead qualification, data analysis, and business operations automation.",
+                                    performance: "Completed"
+                                  },
+                                  {
+                                    no: 5,
+                                    title: "No-Code Implementation & Final Evaluation",
+                                    duration: "3 Hours",
+                                    description: "Deploy workflows using no-code platforms, evaluate performance, manage costs, and present final showcase.",
+                                    performance: "Completed"
+                                  }
+                                ].map((m) => (
+                                  <tr key={m.no} className="hover:bg-slate-50/50 transition-colors odd:bg-white even:bg-slate-50/20">
+                                    <td className="py-3 px-4 text-center font-extrabold text-slate-400">{m.no}</td>
+                                    <td className="py-3 px-4 font-extrabold text-[#091A36] text-xs">{m.title}</td>
+                                    <td className="py-3 px-4 text-center font-extrabold text-slate-500">{m.duration}</td>
+                                    <td className="py-3 px-4 text-slate-400 font-medium leading-relaxed text-[11px]">{m.description}</td>
+                                    <td className="py-3 px-4 text-center">
+                                      <span className="inline-flex items-center gap-1 text-emerald-600 font-extrabold text-[10px] bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-0.5 shadow-sm leading-none">
+                                        <CheckCircle2 className="h-3 w-3" /> Completed
+                                      </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                                {/* Total Duration Footer Row */}
+                                <tr className="bg-slate-50 font-extrabold text-[#091A36]">
+                                  <td colSpan="2" className="py-3.5 px-4 text-right uppercase tracking-wider text-[9px] text-slate-400">Total Duration</td>
+                                  <td className="py-3.5 px-4 text-center text-sm font-black text-[#091A36]">20 Hours</td>
+                                  <td colSpan="2" className="py-3.5 px-4"></td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </div>
 
-                          <div className="absolute bottom-[7.6%] right-[22.2%] w-[15%] rounded-lg bg-white/95 px-2 py-1 text-center">
-                            <p className="text-[clamp(6px,0.75vw,10px)] font-bold text-slate-500">Date of Completion</p>
-                            <p className="text-[clamp(8px,1.05vw,15px)] font-extrabold text-[#091A36]">
-                              {formatDisplayDate(certificateRecord.completionDate, "en-US")}
-                            </p>
-                          </div>
-
-                          <div className="absolute bottom-[7%] right-[6.6%] rounded-xl bg-white/95 p-2 text-center shadow-sm">
-                            <img
-                              src={getQrCodeUrl(certificateRecord.verificationUrl, 116)}
-                              alt="Certificate verification QR code"
-                              className="h-[clamp(48px,7vw,92px)] w-[clamp(48px,7vw,92px)]"
-                            />
-                            <p className="mt-1 text-[clamp(5px,0.65vw,9px)] font-extrabold uppercase tracking-wider text-cyan-700">Verify</p>
+                          {/* Sign-off Footer block with Astrid's signature and Lensetek International stamp */}
+                          <div className="mt-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-slate-100 pt-5">
+                            <div>
+                              <p className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 leading-relaxed">
+                                This transcript is electronically issued by<br />
+                                <span className="text-cyan-700 font-bold">Lensetek International, LLC</span>
+                              </p>
+                              <p className="mt-1 text-[10px] font-semibold text-slate-400">
+                                Verify authenticity using the verification QR code on the certificate.
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-center text-center self-end sm:self-auto">
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Program Director</p>
+                              <div className="flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 p-2">
+                                <img
+                                  src={getQrCodeUrl(`Digitally signed by Astrid, Program Director, Lensetek International, LLC. Certificate: ${certificateRecord.certificateNo}`, 92)}
+                                  alt="Astrid digital signature QR code"
+                                  className="h-12 w-12 rounded bg-white p-0.5 border border-slate-200 shadow-sm"
+                                />
+                                <div className="text-left">
+                                  <p className="font-serif text-sm font-bold text-[#091A36]">Astrid</p>
+                                  <p className="text-[8px] font-bold uppercase tracking-wider text-slate-400 leading-none">QR SIGNED</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mx-auto max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm">
-                        <div className="flex flex-col gap-2 border-b border-slate-100 pb-4 md:flex-row md:items-end md:justify-between">
-                          <div>
-                            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-cyan-700">Official Transcript</p>
-                            <h4 className="text-xl font-extrabold text-slate-900">Transkrip Penyelesaian Modul</h4>
-                          </div>
-                          <p className="font-mono text-xs font-bold text-slate-500">{certificateRecord.certificateNo}</p>
-                        </div>
-
-                        <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-                          {(certificateRecord.transcript || []).map((item) => (
-                            <div key={item.moduleId} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[70px_1fr_130px_120px] md:items-center">
-                              <p className="text-xs font-extrabold text-slate-400">Module {item.moduleId}</p>
-                              <p className="text-sm font-bold text-slate-800">{item.title}</p>
-                              <p className="text-xs font-semibold text-slate-500">{item.hours}</p>
-                              <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-emerald-700">
-                                {item.status}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap justify-center gap-3">
+                      {/* Action buttons (No Print) */}
+                      <div className="flex flex-wrap justify-center gap-3 no-print">
                         <a
                           href={certificateRecord.verificationUrl}
                           target="_blank"
@@ -3001,6 +3302,7 @@ export default function LensetekAgenticAiLandingPage() {
               <a href="#modules" className="hover:text-[#091A36] transition-colors">{lang === "EN" ? "Curriculum" : "Kurikulum"}</a>
               <a href="#competencies" className="hover:text-[#091A36] transition-colors">{lang === "EN" ? "Competencies" : "Kompetensi"}</a>
               <a href="#benefits" className="hover:text-[#091A36] transition-colors">{lang === "EN" ? "Use Cases" : "Use Case"}</a>
+              <a href="/verify" className="hover:text-[#091A36] transition-colors">{lang === "EN" ? "Verify Certificate" : "Verifikasi"}</a>
             </div>
 
             <div className="flex items-center gap-3 shrink-0">
@@ -3564,14 +3866,19 @@ export default function LensetekAgenticAiLandingPage() {
           <footer className="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-400">
             <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p>© {new Date().getFullYear()} Lensetek International, LLC. United States. All rights reserved.</p>
-              <a 
-                href={githubUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex items-center gap-1.5 text-slate-400 hover:text-[#091A36] transition-colors text-sm font-semibold"
-              >
-                <GithubIcon className="h-4 w-4" /> View GitHub Repository
-              </a>
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                <a href="/verify" className="text-slate-400 hover:text-[#091A36] transition-colors text-sm font-semibold">
+                  {lang === "EN" ? "Verify Certificate" : "Verifikasi Sertifikat"}
+                </a>
+                <a 
+                  href={githubUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-1.5 text-slate-400 hover:text-[#091A36] transition-colors text-sm font-semibold"
+                >
+                  <GithubIcon className="h-4 w-4" /> View GitHub Repository
+                </a>
+              </div>
             </div>
           </footer>
 

@@ -17,3 +17,148 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Print Specific Rules */
+@media print {
+  /* Set document size to standard margins */
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide headers, footers, navs, sidebars, buttons, and verification controls */
+  nav, footer, aside, button, a, header, section:not(.print-section), .no-print {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Reset all potential clipping parent layout structures on print to guarantee multi-page flow */
+  html, body, #root, .print-section, .classroom-layout-grid, .classroom-workzone {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+    display: block !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Print container takes normal relative flow so all child pages render sequentially */
+  .print-container {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Render elements */
+  .print-container * {
+    visibility: visible !important;
+  }
+
+  /* Separate certificate and transcript onto different pages, spanning exactly 1 full viewport each */
+  .print-page {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-inside: avoid !important;
+    overflow: hidden !important;
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent trailing blank pages at the end of the print document */
+  .print-page:not(:last-child) {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  /* Force Certificate Aspect Ratio and centering */
+  .print-cert-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 0 !important;
+  }
+
+  /* Format Transcript cleanly on Page 2 in landscape aspect with compact flex spacing, guaranteeing zero clipping */
+  .print-transcript-wrapper {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    padding: 1.5rem 2.5rem !important; /* Compact padding to save vertical space */
+    border: none !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  /* Compact spacing inside transcript print layout */
+  .print-transcript-wrapper .mt-6 {
+    margin-top: 0.75rem !important;
+  }
+
+  .print-transcript-wrapper .mt-8 {
+    margin-top: 0.75rem !important;
+  }
+
+  .print-transcript-wrapper .pb-4 {
+    padding-bottom: 0.5rem !important;
+  }
+
+  /* Extremely compact layout tables & cards on print */
+  .print-transcript-wrapper table th {
+    padding: 6px 12px !important;
+    font-size: 8px !important;
+  }
+
+  .print-transcript-wrapper table td {
+    padding: 5px 12px !important;
+    font-size: 9.5px !important;
+  }
+
+  .print-transcript-wrapper table tr.bg-slate-50 td {
+    padding: 6px 12px !important;
+  }
+
+  .print-transcript-wrapper .p-5 {
+    padding: 0.75rem !important; /* Tight padding for student metadata card */
+  }
+
+  .print-transcript-wrapper .p-3 {
+    padding: 0.5rem !important; /* Tight padding for summary badges */
+  }
+
+  .print-transcript-wrapper .grid-cols-3 {
+    gap: 0.35rem !important;
+  }
+
+  .print-transcript-wrapper .gap-y-3 {
+    row-gap: 0.35rem !important;
+  }
+}
