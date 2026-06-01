@@ -1606,6 +1606,7 @@ export default function LensetekAgenticAiLandingPage() {
   const [showBiodataModal, setShowBiodataModal] = useState(false);
   const [biodata, setBiodata] = useState(null);
   const [certificateRecord, setCertificateRecord] = useState(null);
+  const [certificateRefreshAfterBiodata, setCertificateRefreshAfterBiodata] = useState(false);
   const [verificationRecord, setVerificationRecord] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const publishedCertificateRef = useRef(new Set());
@@ -1666,6 +1667,16 @@ export default function LensetekAgenticAiLandingPage() {
     gender: "Laki-laki",
     occupation: "Mahasiswa / Pelajar"
   });
+
+  const isBiodataComplete = (profile) =>
+    !!(
+      profile?.fullName?.trim() &&
+      profile?.whatsapp?.trim() &&
+      profile?.birthPlace?.trim() &&
+      profile?.birthDate?.trim() &&
+      profile?.occupation?.trim()
+    );
+
   const hasCourseAccess = !!(
     biodata?.invitationCode ||
     certificateRecord ||
@@ -1704,7 +1715,9 @@ export default function LensetekAgenticAiLandingPage() {
     }
   };
 
-  const buildCertificateRecord = (existingCertificateNo) => {
+  const buildCertificateRecord = (existingCertificateNo, profile = biodata) => {
+    if (!isBiodataComplete(profile)) return null;
+
     const issuedAt = new Date();
     const validUntil = new Date(issuedAt);
     validUntil.setFullYear(validUntil.getFullYear() + 1);
@@ -1713,7 +1726,7 @@ export default function LensetekAgenticAiLandingPage() {
     const baseOrigin = import.meta.env.VITE_CREDENTIAL_URL || window.location.origin;
     const sanitizedBase = baseOrigin.endsWith("/") ? baseOrigin.slice(0, -1) : baseOrigin;
     const verificationUrl = `${sanitizedBase}/verify/${certificateNo}`;
-    const holderName = biodata?.fullName || user.displayName || "Participant";
+    const holderName = profile?.fullName || user.displayName || "Participant";
 
     return {
       certificateNo,
@@ -1761,14 +1774,57 @@ export default function LensetekAgenticAiLandingPage() {
     }
   };
 
+  const supersedeCertificateRecord = async (oldRecord, newRecord) => {
+    if (!oldRecord?.certificateNo || !newRecord?.certificateNo || oldRecord.certificateNo === newRecord.certificateNo) return;
+
+    try {
+      await setDoc(doc(db, "certificates", oldRecord.certificateNo), {
+        certificateNo: oldRecord.certificateNo,
+        status: "reissued",
+        reissuedTo: newRecord.certificateNo,
+        lastUpdated: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.error("Certificate Supersede Error:", error);
+    }
+  };
+
   const ensureCertificateRecord = async () => {
     if (!user) return null;
+    if (!isBiodataComplete(biodata)) {
+      setBiodataForm(biodata || getDefaultBiodata(user));
+      if (certificateRecord) setCertificateRefreshAfterBiodata(true);
+      setShowBiodataModal(true);
+      return null;
+    }
+
+    if (certificateRefreshAfterBiodata && certificateRecord) {
+      const oldRecord = certificateRecord;
+      const refreshedRecord = buildCertificateRecord(null, biodata);
+      if (!refreshedRecord) return null;
+
+      setCertificateRecord(refreshedRecord);
+      setCertificateRefreshAfterBiodata(false);
+      cacheUserProgress(user.uid, { certificate: refreshedRecord });
+
+      try {
+        await publishCertificateRecord(refreshedRecord);
+        await supersedeCertificateRecord(oldRecord, refreshedRecord);
+        await saveProgressToCollection({ certificate: refreshedRecord });
+      } catch (error) {
+        console.error("Certificate Refresh Error:", error);
+      }
+
+      return refreshedRecord;
+    }
+
     if (certificateRecord) {
       await publishCertificateRecord(certificateRecord);
       return certificateRecord;
     }
 
     const record = buildCertificateRecord();
+    if (!record) return null;
     setCertificateRecord(record);
     cacheUserProgress(user.uid, { certificate: record });
 
@@ -1994,6 +2050,10 @@ export default function LensetekAgenticAiLandingPage() {
   const handleBiodataSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
+    const shouldRefreshCertificate =
+      allModulesCompleted &&
+      certificateRecord &&
+      (!isBiodataComplete(biodata) || certificateRefreshAfterBiodata);
 
     // Form validation check
     const completeForm = {
@@ -2009,6 +2069,23 @@ export default function LensetekAgenticAiLandingPage() {
 
     setBiodata(completeForm);
     setShowBiodataModal(false);
+
+    if (shouldRefreshCertificate && isBiodataComplete(completeForm)) {
+      const oldRecord = certificateRecord;
+      const refreshedRecord = buildCertificateRecord(null, completeForm);
+      if (!refreshedRecord) return;
+
+      setCertificateRecord(refreshedRecord);
+      setCertificateRefreshAfterBiodata(false);
+
+      try {
+        await publishCertificateRecord(refreshedRecord);
+        await supersedeCertificateRecord(oldRecord, refreshedRecord);
+        await saveProgressToCollection({ certificate: refreshedRecord });
+      } catch (error) {
+        console.error("Certificate Refresh After Biodata Error:", error);
+      }
+    }
   };
 
   const handleInviteCodeSubmit = async (e) => {
@@ -2079,8 +2156,8 @@ export default function LensetekAgenticAiLandingPage() {
       setBiodata(updatedBiodata);
       setInviteSuccess(true);
 
-      // Trigger transition: if no profile fields completed, show Biodata Modal next
-      if (!biodata || !biodata.whatsapp || !biodata.birthDate) {
+      // Trigger transition: if required profile fields are incomplete, show Biodata Modal next
+      if (!isBiodataComplete(updatedBiodata)) {
         setBiodataForm(updatedBiodata);
         setShowBiodataModal(true);
       }
@@ -2292,6 +2369,7 @@ export default function LensetekAgenticAiLandingPage() {
 
   const currentT = t[lang];
   const allModulesCompleted = currentT.modulesList.every(m => completedModules[m.id]);
+  const certificateNeedsBiodataRefresh = !!certificateRecord && !isBiodataComplete(biodata);
   const isVerificationPage = window.location.pathname.startsWith("/verify");
   const verificationCertificateNo = isVerificationPage
     ? decodeURIComponent(window.location.pathname.replace(/^\/verify\/?/, "")).trim()
@@ -2317,10 +2395,10 @@ export default function LensetekAgenticAiLandingPage() {
   }, [isVerificationPage, verificationCertificateNo]);
 
   useEffect(() => {
-    if (classroomTab === "certificate" && allModulesCompleted && user && !certificateRecord) {
+    if (classroomTab === "certificate" && allModulesCompleted && user && !certificateRecord && isBiodataComplete(biodata)) {
       ensureCertificateRecord();
     }
-  }, [classroomTab, allModulesCompleted, user, certificateRecord]);
+  }, [classroomTab, allModulesCompleted, user, certificateRecord, biodata]);
 
   useEffect(() => {
     if (user && certificateRecord?.certificateNo) {
@@ -2346,9 +2424,24 @@ export default function LensetekAgenticAiLandingPage() {
             <div className="py-12 text-center text-sm font-semibold text-slate-500">Verifying certificate...</div>
           ) : verificationRecord ? (
             <div className="space-y-6 pt-6">
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Status</p>
-                <p className="mt-1 text-xl font-extrabold text-emerald-800">Valid Certificate</p>
+              <div className={`rounded-2xl border p-5 text-left ${
+                verificationRecord.status === "reissued"
+                  ? "border-amber-200 bg-amber-50"
+                  : "border-emerald-200 bg-emerald-50"
+              }`}>
+                <p className={`text-xs font-extrabold uppercase tracking-wider ${
+                  verificationRecord.status === "reissued" ? "text-amber-700" : "text-emerald-700"
+                }`}>Status</p>
+                <p className={`mt-1 text-xl font-extrabold ${
+                  verificationRecord.status === "reissued" ? "text-amber-800" : "text-emerald-800"
+                }`}>
+                  {verificationRecord.status === "reissued" ? "Reissued Certificate" : "Valid Certificate"}
+                </p>
+                {verificationRecord.status === "reissued" && verificationRecord.reissuedTo && (
+                  <p className="mt-2 text-xs font-semibold text-amber-700">
+                    This certificate has been regenerated. New certificate number: {verificationRecord.reissuedTo}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -2414,7 +2507,7 @@ export default function LensetekAgenticAiLandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 overflow-hidden font-['Inter'] relative transition-colors duration-300">
+    <main className="min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden font-['Inter'] relative transition-colors duration-300">
       
       {/* Biodata Form Modal (First Login Only) */}
       <AnimatePresence>
@@ -2429,7 +2522,7 @@ export default function LensetekAgenticAiLandingPage() {
               initial={{ scale: 0.95, y: 20 }} 
               animate={{ scale: 1, y: 0 }} 
               exit={{ scale: 0.95, y: 20 }} 
-              className="bg-[#FCFAF7] border border-slate-200 rounded-[2.5rem] w-full max-w-xl p-8 shadow-2xl relative my-8 text-slate-800 font-sans"
+              className="bg-[#FCFAF7] border border-slate-200 rounded-3xl sm:rounded-[2.5rem] w-full max-w-xl p-5 sm:p-8 shadow-2xl relative my-8 text-slate-800 font-sans"
             >
               <div className="flex items-center gap-4 border-b border-slate-200 pb-4 mb-6">
                 <div className="h-12 w-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shrink-0 shadow-inner">
@@ -2485,7 +2578,7 @@ export default function LensetekAgenticAiLandingPage() {
                 </div>
 
                 {/* Place and Date of Birth */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5">{lang === "EN" ? "Place of Birth" : "Tempat Lahir"}</label>
                     <input 
@@ -2510,7 +2603,7 @@ export default function LensetekAgenticAiLandingPage() {
                 </div>
 
                 {/* Gender & Occupation */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5">{lang === "EN" ? "Gender" : "Jenis Kelamin"}</label>
                     <select 
@@ -2559,14 +2652,14 @@ export default function LensetekAgenticAiLandingPage() {
 
       {/* Nav */}
       {user && (
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8 border-b border-slate-200 backdrop-blur-md sticky top-0 z-50">
-          <a href="#top" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white ring-1 ring-slate-200 p-1.5 shadow-sm overflow-hidden">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 border-b border-slate-200 backdrop-blur-md sticky top-0 z-50">
+          <a href="#top" className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white ring-1 ring-slate-200 p-1.5 shadow-sm overflow-hidden shrink-0">
               <img src="https://lensetek.com/favicon.png" alt="Lensetek Logo" className="h-full w-full object-contain" />
             </div>
-            <div>
-              <p className="text-sm font-bold tracking-wide text-slate-800 font-['Plus_Jakarta_Sans']">Lensetek International</p>
-              <p className="text-[10px] uppercase tracking-widest text-cyan-600 font-bold">Certification Program</p>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold tracking-wide text-slate-800 font-['Plus_Jakarta_Sans']">Lensetek International</p>
+              <p className="truncate text-[9px] uppercase tracking-wider text-cyan-600 font-bold sm:text-[10px] sm:tracking-widest">Certification Program</p>
             </div>
           </a>
 
@@ -2822,7 +2915,7 @@ export default function LensetekAgenticAiLandingPage() {
           <motion.section 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mx-auto max-w-7xl px-6 py-12 lg:px-8 print-section"
+            className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 print-section"
           >
           {/* Welcome Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-cyan-50 to-indigo-50/50 border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm mb-8 font-sans no-print">
@@ -2944,9 +3037,13 @@ export default function LensetekAgenticAiLandingPage() {
                 <button
                   disabled={!allModulesCompleted}
                   onClick={() => {
-                    if (!certificateRecord) {
-                      ensureCertificateRecord();
+                    if (!isBiodataComplete(biodata)) {
+                      setBiodataForm(biodata || getDefaultBiodata(user));
+                      if (certificateRecord) setCertificateRefreshAfterBiodata(true);
+                      setShowBiodataModal(true);
+                      return;
                     }
+                    if (!certificateRecord) ensureCertificateRecord();
                     setClassroomTab("certificate");
                   }}
                   className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-extrabold transition-all ${
@@ -2955,13 +3052,13 @@ export default function LensetekAgenticAiLandingPage() {
                       : 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
                 >
-                  {certificateRecord ? currentT.certViewBtn : currentT.certBtn}
+                  {certificateNeedsBiodataRefresh ? currentT.certBtn : certificateRecord ? currentT.certViewBtn : currentT.certBtn}
                 </button>
               </div>
             </div>
 
             {/* RIGHT WORK ZONE: Materials, Lab, Quizzes */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm relative min-h-[500px] classroom-workzone">
+            <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm relative min-h-[500px] overflow-hidden classroom-workzone">
               
               {/* Tab Selector */}
               {classroomTab !== "certificate" && (
@@ -3025,15 +3122,15 @@ export default function LensetekAgenticAiLandingPage() {
                           const explanation = sessionExplanations[lang]?.[moduleId]?.[sIdx];
 
                           return (
-                            <div key={sIdx} className="bg-slate-50 border border-slate-150 rounded-2xl p-5 space-y-3 shadow-inner transition-all duration-300">
-                              <div className="flex items-center justify-between gap-4">
+                            <div key={sIdx} className="bg-slate-50 border border-slate-150 rounded-2xl p-4 sm:p-5 space-y-3 shadow-inner transition-all duration-300">
+                              <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
                                 <h5 className="font-bold text-sm text-cyan-600 font-['Plus_Jakarta_Sans']">
                                   {session.title}
                                 </h5>
                                 {explanation && (
                                   <button
                                     onClick={() => setExpandedSession(isExpanded ? null : `${moduleId}-${sIdx}`)}
-                                    className="text-[10px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg border border-cyan-200 bg-cyan-50 text-cyan-600 hover:bg-cyan-100 transition-all cursor-pointer shrink-0"
+                                    className="w-full text-[10px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg border border-cyan-200 bg-cyan-50 text-cyan-600 hover:bg-cyan-100 transition-all cursor-pointer sm:w-auto sm:shrink-0"
                                   >
                                     {isExpanded 
                                       ? (lang === "EN" ? "Hide Guide" : "Tutup Panduan") 
@@ -3365,7 +3462,21 @@ export default function LensetekAgenticAiLandingPage() {
                     </button>
                   </div>
 
-                  {!certificateRecord ? (
+                  {certificateNeedsBiodataRefresh ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-left text-sm font-bold text-amber-800 no-print">
+                      <p>{lang === "EN" ? "Your certificate needs updated biodata before it can be regenerated." : "Sertifikat Anda perlu biodata lengkap sebelum dibuat ulang."}</p>
+                      <button
+                        onClick={() => {
+                          setBiodataForm(biodata || getDefaultBiodata(user));
+                          setCertificateRefreshAfterBiodata(true);
+                          setShowBiodataModal(true);
+                        }}
+                        className="mt-4 rounded-xl bg-amber-500 px-5 py-3 text-xs font-black text-slate-950 shadow-sm transition-all hover:bg-amber-600"
+                      >
+                        {currentT.biodataCompleteBtn}
+                      </button>
+                    </div>
+                  ) : !certificateRecord ? (
                     <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-sm font-bold text-amber-800 no-print">
                       Menerbitkan sertifikat dan nomor verifikasi...
                     </div>
@@ -3424,7 +3535,7 @@ export default function LensetekAgenticAiLandingPage() {
 
                             <div className="absolute bottom-[4.2%] right-[6.6%] rounded-xl bg-white p-2 text-center shadow-md border border-slate-100/50 z-10">
                               <img
-                                src={getQrCodeUrl(certificateRecord.verificationUrl, 116)}
+                                src={getQrCodeUrl(getDynamicVerificationUrl(certificateRecord), 116)}
                                 alt="Certificate verification QR code"
                                 className="h-[clamp(48px,6.5vw,86px)] w-[clamp(48px,6.5vw,86px)]"
                               />
@@ -3648,14 +3759,14 @@ export default function LensetekAgenticAiLandingPage() {
         <div className="bg-[#FCFAF7] min-h-screen text-slate-800 selection:bg-amber-400 selection:text-slate-950 font-sans">
           
           {/* Header / Navbar */}
-          <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8 border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-50">
-            <a href="#top" className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#091A36] p-1.5 shadow-sm overflow-hidden shrink-0">
+          <header className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-4 sm:px-6 sm:py-5 lg:px-8 border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-50">
+            <a href="#top" className="flex min-w-0 items-center gap-2 sm:gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#091A36] p-1.5 shadow-sm overflow-hidden shrink-0 sm:h-11 sm:w-11">
                 <img src="https://lensetek.com/favicon.png" alt="Lensetek Logo" className="h-full w-full object-contain filter brightness-0 invert" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-extrabold tracking-tight text-[#091A36] font-['Plus_Jakarta_Sans'] uppercase leading-none">Lensetek</p>
-                <p className="text-[9px] uppercase tracking-wider text-amber-500 font-extrabold mt-0.5">International, LLC</p>
+                <p className="text-[8px] uppercase tracking-normal text-amber-500 font-extrabold mt-0.5 leading-tight sm:text-[9px] sm:tracking-wider">International, LLC</p>
               </div>
             </a>
 
@@ -3667,18 +3778,18 @@ export default function LensetekAgenticAiLandingPage() {
               <a href="/verify" className="hover:text-[#091A36] transition-colors">{lang === "EN" ? "Verify Certificate" : "Verifikasi"}</a>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0 sm:gap-3">
               {/* Dual Language Switcher */}
-              <div className="flex bg-slate-100 border border-slate-200 rounded-xl p-0.5 gap-0.5 mr-2">
+              <div className="flex bg-slate-100 border border-slate-200 rounded-xl p-0.5 gap-0.5 sm:mr-2">
                 <button 
                   onClick={() => setLang("EN")} 
-                  className={`px-2 py-1 text-[10px] font-extrabold rounded-lg transition-all cursor-pointer ${lang === "EN" ? 'bg-white text-cyan-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-1.5 py-1 text-[10px] font-extrabold rounded-lg transition-all cursor-pointer sm:px-2 ${lang === "EN" ? 'bg-white text-cyan-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                 >
                   EN
                 </button>
                 <button 
                   onClick={() => setLang("ID")} 
-                  className={`px-2 py-1 text-[10px] font-extrabold rounded-lg transition-all cursor-pointer ${lang === "ID" ? 'bg-white text-cyan-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-1.5 py-1 text-[10px] font-extrabold rounded-lg transition-all cursor-pointer sm:px-2 ${lang === "ID" ? 'bg-white text-cyan-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                 >
                   ID
                 </button>
@@ -3689,7 +3800,7 @@ export default function LensetekAgenticAiLandingPage() {
                 href={githubUrl} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="p-2 text-slate-500 hover:text-[#091A36] transition-colors mr-1" 
+                className="hidden p-2 text-slate-500 hover:text-[#091A36] transition-colors sm:inline-flex sm:mr-1" 
                 title="GitHub Repository"
               >
                 <GithubIcon className="h-5 w-5" />
@@ -3697,9 +3808,11 @@ export default function LensetekAgenticAiLandingPage() {
 
               <button 
                 onClick={handleGoogleAuth} 
-                className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-xs font-extrabold text-slate-950 transition-all cursor-pointer shadow-sm text-center flex items-center gap-1.5"
+                className="h-11 w-11 justify-center rounded-xl bg-amber-500 hover:bg-amber-600 text-xs font-extrabold text-slate-950 transition-all cursor-pointer shadow-sm text-center flex items-center gap-1.5 sm:h-auto sm:w-auto sm:px-5 sm:py-2.5"
+                aria-label={lang === "EN" ? "Login / Signup" : "Masuk / Daftar"}
               >
-                👤 {lang === "EN" ? "Login / Signup" : "Masuk / Daftar"}
+                <span aria-hidden="true">👤</span>
+                <span className="hidden sm:inline">{lang === "EN" ? "Login / Signup" : "Masuk / Daftar"}</span>
               </button>
             </div>
           </header>
@@ -3816,7 +3929,7 @@ export default function LensetekAgenticAiLandingPage() {
           </section>
 
           {/* Curriculum Section */}
-          <section id="modules" className="py-20 px-6 lg:px-8 bg-white border-b border-slate-100">
+          <section id="modules" className="py-16 px-4 sm:px-6 lg:px-8 bg-white border-b border-slate-100">
             <div className="mx-auto max-w-7xl text-center">
               <h2 className="text-3xl font-extrabold tracking-tight text-[#091A36] sm:text-4xl font-['Plus_Jakarta_Sans']">
                 {lang === "EN" ? "5-Module Curriculum – 20 Hours" : "Kurikulum 5 Modul – 20 Jam"}
@@ -3827,7 +3940,7 @@ export default function LensetekAgenticAiLandingPage() {
                   : "Dirancang secara bertahap untuk pemula hingga profesional bisnis. Tidak membutuhkan latar belakang coding."}
               </p>
 
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6">
                 
                 {/* Module 1 */}
                 <div className="bg-[#FCFAF7] border border-slate-100 hover:border-slate-200 rounded-3xl p-6 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all duration-300">
@@ -3939,7 +4052,7 @@ export default function LensetekAgenticAiLandingPage() {
           </section>
 
           {/* Competency Section */}
-          <section id="competencies" className="py-20 px-6 lg:px-8 bg-[#FCFAF7] border-b border-slate-100">
+          <section id="competencies" className="py-16 px-4 sm:px-6 lg:px-8 bg-[#FCFAF7] border-b border-slate-100">
             <div className="mx-auto max-w-7xl text-center">
               <h2 className="text-3xl font-extrabold tracking-tight text-[#091A36] sm:text-4xl font-['Plus_Jakarta_Sans']">
                 {lang === "EN" ? "Key Competencies You Will Master" : "Kompetensi Akhir yang Anda Kuasai"}
@@ -3950,7 +4063,7 @@ export default function LensetekAgenticAiLandingPage() {
                   : "Miliki kompetensi praktis berstandar industri untuk merancang workflow bisnis berbasis kecerdasan buatan."}
               </p>
 
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 
                 {/* Competency 1 */}
                 <div className="flex flex-col items-center text-center p-4">
@@ -4017,7 +4130,7 @@ export default function LensetekAgenticAiLandingPage() {
           </section>
 
           {/* Solutions Section */}
-          <section id="benefits" className="py-20 px-6 lg:px-8 bg-white border-b border-slate-100">
+          <section id="benefits" className="py-16 px-4 sm:px-6 lg:px-8 bg-white border-b border-slate-100">
             <div className="mx-auto max-w-7xl text-center">
               <h2 className="text-3xl font-extrabold tracking-tight text-[#091A36] sm:text-4xl font-['Plus_Jakarta_Sans']">
                 {lang === "EN" ? "Build Real-World Solutions for Your Business" : "Bangun Solusi Nyata untuk Bisnis Anda"}
@@ -4028,7 +4141,7 @@ export default function LensetekAgenticAiLandingPage() {
                   : "Mulai bangun solusi kecerdasan buatan siap pakai untuk operasional bisnis harian Anda."}
               </p>
 
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6">
                 
                 {/* Solution 1 */}
                 <div className="bg-[#FCFAF7] border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
